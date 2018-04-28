@@ -3,17 +3,21 @@ package application;
 import application.graphDrawer.GraphDrawer;
 import application.graphDrawer.GraphDrawerDataSource;
 import application.graphDrawer.MySize;
+import graph.MyEdge;
+import graph.MyGraph;
+import graph.MyNode;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ButtonBase;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 
 public class Main extends Application implements GraphDrawerDataSource {
+	
+	private MyGraph graph;
+	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -32,6 +36,28 @@ public class Main extends Application implements GraphDrawerDataSource {
 	}
 	
 	private Pane setup() {
+		graph = new MyGraph();
+		MyNode<?> node = new MyNode<>(1, 0);
+		MyNode<?> node2 = new MyNode<>(5, 1);
+		MyNode<?> node3 = new MyNode<>(20, 2);
+		
+		MyEdge<?> edge = new MyEdge<>(node2, 10);
+		MyEdge<?> edge2 = new MyEdge<>(node, 5);
+		MyEdge<?> edge3 = new MyEdge<>(node3, 17);
+		MyEdge<?> edge4 = new MyEdge<>(node, 3);
+		
+		graph.addNode(node);
+		graph.addNode(node2);
+		graph.addNode(node3);
+		
+		node.addEdge(edge);
+		node.addEdge(edge3);
+		
+		node2.addEdge(edge2);
+		
+		node3.addEdge(edge4);
+		
+		
 		GraphDrawer btn = new GraphDrawer();
 		btn.setDataSource(this);
 		
@@ -47,7 +73,7 @@ public class Main extends Application implements GraphDrawerDataSource {
 	@Override
 	public Integer graphDrawerNumberOfNodes(GraphDrawer graphDrawer) {
 		
-		return null;
+		return this.graph.numberOfNodes();
 	}
 
 	@Override
@@ -65,6 +91,6 @@ public class Main extends Application implements GraphDrawerDataSource {
 	@Override
 	public Color graphDrawerGraphColor(GraphDrawer graphDrawer) {
 		
-		return null;
+		return Color.BLACK;
 	}
 }

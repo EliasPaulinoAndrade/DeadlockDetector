@@ -3,10 +3,10 @@ package graph;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MyNode<NodeElement, PathElement>{
+public class MyNode<NodeElement>{
 	private Integer id;
 	private NodeElement value;
-	private List<MyEdge<NodeElement, PathElement>> edges;
+	private List<MyEdge<?>> edges;
 	
 	public MyNode(NodeElement value, Integer id) {
 		this.value = value;
@@ -26,11 +26,11 @@ public class MyNode<NodeElement, PathElement>{
 		this.value = value;
 	}
 	
-	public Boolean addEdge(MyEdge<NodeElement, PathElement> edge) {
+	public Boolean addEdge(MyEdge<?> edge) {
 		return this.edges.add(edge);
 	}
 	
-	public Boolean removeEdge(MyEdge<NodeElement, PathElement> edge) {
+	public Boolean removeEdge(MyEdge<?> edge) {
 		return this.edges.remove(edge);
 	}
 	
@@ -40,7 +40,7 @@ public class MyNode<NodeElement, PathElement>{
 		
 		nodeStringBuilder.append("[id: " + id);
 		nodeStringBuilder.append(", value: " + value + "]");
-		for(MyEdge<NodeElement, PathElement> edge : edges) {
+		for(MyEdge<?> edge : edges) {
 			nodeStringBuilder.append("  ->  ");
 			nodeStringBuilder.append(edge);
 		}

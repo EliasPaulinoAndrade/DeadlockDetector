@@ -3,26 +3,30 @@ package graph;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MyGraph<NodeElement, PathElement>{
-	private List<MyNode<NodeElement, PathElement>> vertices;
+public class MyGraph{
+	private List<MyNode<?>> vertices;
 
 	public MyGraph() {
 		vertices = new LinkedList<>();
 	}
 
-	public Boolean addNode(MyNode<NodeElement, PathElement> node) {
+	public Boolean addNode(MyNode<?> node) {
 		return this.vertices.add(node);
 	}
 	
-	public Boolean removeNode(MyNode<NodeElement, PathElement> node) {
+	public Boolean removeNode(MyNode<?> node) {
 		return this.vertices.remove(node);
+	}
+	
+	public Integer numberOfNodes() {
+		return this.vertices.size();
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder graphStringBuilder = new StringBuilder();
 		
-		for(MyNode<NodeElement, PathElement> node : vertices) {
+		for(MyNode<?> node : vertices) {
 			graphStringBuilder.append(node);
 			graphStringBuilder.append("\n");
 		}
