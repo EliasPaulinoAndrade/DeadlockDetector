@@ -56,14 +56,14 @@ public class Main extends Application implements GraphDrawerDataSource {
 		node.addEdge(edge);
 		node.addEdge(edge3);
 		
-		node2.addEdge(edge2);
+		//node2.addEdge(edge2);
 		
-		node3.addEdge(edge4);
+		//node3.addEdge(edge4);
 		
 		GraphDrawer btn = new GraphDrawer();
 		btn.setDataSource(this);
 		
-		btn.drawGraphNodes();
+		btn.drawGraph();
 		
         Pane root = new Pane();
 		
@@ -79,11 +79,11 @@ public class Main extends Application implements GraphDrawerDataSource {
 	}
 
 	@Override
-	public Node graphDrawerNodeViewForIndex(GraphDrawer graphDrawer, Integer index) {
+	public Node graphDrawerNodeViewForNodeAtIndex(GraphDrawer graphDrawer, Integer index) {
 		StackPane nodeView = new StackPane();
 		MyNode<?> node = this.graph.getNodeAt(index);
 		
-		Circle nodeCircle = new Circle(60);
+		Circle nodeCircle = new Circle(30);
 		nodeCircle.setFill(Color.WHITE);
 		
 		Text nodeText = new Text(node.getValue().toString());
@@ -107,7 +107,30 @@ public class Main extends Application implements GraphDrawerDataSource {
 
 	@Override
 	public MySize graphDrawerNodeMaxSize(GraphDrawer graphDrawer) {
-		// TODO Auto-generated method stub
-		return new MySize(120, 120);
+
+		return new MySize(60, 60);
+	}
+
+	@Override
+	public Integer graphDrawerNumberOfEdgesStartingFromNodeAtIndex(GraphDrawer graphDrawer, Integer index) {
+
+		return this.graph.getNodeAt(index).numberOfEdges();
+	}
+
+	@Override
+	public Integer graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(GraphDrawer graphDrawer, Integer edgeIndex, Integer nodeIndex) {
+		return this.graph.getNodeAt(nodeIndex).getEdgeAt(edgeIndex).getDestinationVertex().getId();
+	}
+
+	@Override
+	public Color graphDrawerEdgesColor(GraphDrawer graphDrawer) {
+		
+		return Color.RED;
+	}
+
+	@Override
+	public Double graphDrawerMinDistanceBetweenNodes(GraphDrawer graphDrawer) {
+		
+		return 50.0;
 	}
 }

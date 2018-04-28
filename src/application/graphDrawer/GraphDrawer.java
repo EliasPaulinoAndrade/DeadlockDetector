@@ -1,13 +1,10 @@
 package application.graphDrawer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Random;
 
-import com.sun.javafx.geom.BoxBounds;
-
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -16,11 +13,11 @@ import javafx.scene.paint.Color;
 
 public class GraphDrawer extends Region{
 	private GraphDrawerDataSource dataSource;
-	private List<Node> nodes;
+	private Dictionary<Integer, Node> nodes;
 	
 	public GraphDrawer() {
 		super();
-		this.nodes = new ArrayList<>();
+		this.nodes = new Hashtable<>();
 		
 	}
 
@@ -32,27 +29,78 @@ public class GraphDrawer extends Region{
 		this.dataSource = dataSource;
 	}
 	
-	public void drawGraphNodes() {
+	public void drawGraph() {
 		if(dataSource == null) {
 			return ;
 		}
 		Color rootColor = dataSource.graphDrawerGraphColor(this);
 		MySize rootSize = dataSource.graphDrawerGraphSize(this);
-		Integer numberOfNodes = dataSource.graphDrawerNumberOfNodes(this);
 		Background rootBackground = new Background(new BackgroundFill(rootColor, null, null));
 
 		this.setMinSize(rootSize.getWidth(), rootSize.getHeight());
 		this.setBackground(rootBackground);
+		
+		drawNodes();
+		drawEdges();
+	}
 	
+	private void drawEdges() {
+		if(dataSource == null) {
+			return ;
+		}
+		
+		Enumeration<Integer> nodeIndices = this.nodes.keys();
+		Integer currentNodeIndex;
+		Integer currentNodeNumberOfEdges;
+		Integer currentEdgeIndexFromNode;
+		Node currentNode;
+		Integer currentDestination;
+		Node destinationNode;
+		GraphLine currentLineEdge;
+		while(nodeIndices.hasMoreElements()) {
+			
+			currentNodeIndex = nodeIndices.nextElement();
+			currentNode = this.nodes.get(currentNodeIndex);
+			currentNodeNumberOfEdges = dataSource.graphDrawerNumberOfEdgesStartingFromNodeAtIndex(this, currentNodeIndex);
+			
+			for(currentEdgeIndexFromNode = 0; currentEdgeIndexFromNode < currentNodeNumberOfEdges; currentEdgeIndexFromNode++) {
+				currentDestination = dataSource.graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(this, currentEdgeIndexFromNode, currentNodeIndex);
+				destinationNode = this.nodes.get(currentDestination);
+				
+				currentLineEdge = new GraphLine(
+						currentNode.getLayoutX() + currentNode.getBoundsInParent().getWidth()/2, 
+						currentNode.getLayoutY() + currentNode.getBoundsInParent().getWidth()/2,
+						destinationNode.getLayoutX() +  destinationNode.getBoundsInParent().getWidth()/2, 
+						destinationNode.getLayoutY() + destinationNode.getBoundsInParent().getHeight()/2
+						);
+				
+				
+				currentLineEdge.setStroke(dataSource.graphDrawerEdgesColor(this));
+				this.getChildren().add(currentLineEdge);
+			
+				currentLineEdge.toBack();
+				
+			}
+		}
+	}
+	
+	private void drawNodes() {
+		if(dataSource == null) {
+			return ;
+		}
+		
+		MySize rootSize = dataSource.graphDrawerGraphSize(this);
+		Integer numberOfNodes = dataSource.graphDrawerNumberOfNodes(this);
 		
 		Node currentNode;
 		for(int nodeIndex = 0; nodeIndex < numberOfNodes; nodeIndex++) {
-			currentNode = dataSource.graphDrawerNodeViewForIndex(this, nodeIndex);
+			currentNode = dataSource.graphDrawerNodeViewForNodeAtIndex(this, nodeIndex);
 			setNodeInRandomUnusedPoint(rootSize, currentNode);
-			this.nodes.add(currentNode);
+			this.nodes.put(nodeIndex, currentNode);
 			this.getChildren().add(currentNode);
 		}
 	}
+	
 	private void setNodeInRandomUnusedPoint(MySize containerSize, Node targetNode) {
 		Random random = new Random();
 
@@ -71,9 +119,14 @@ public class GraphDrawer extends Region{
 		}
 		
 	}
+	
 	private Boolean checkUsedPoint(Node targetNode) {
-		for(Node node : this.nodes) {
-			if (node.getBoundsInParent().intersects(targetNode.getBoundsInParent())){
+		Enumeration<Node> nodes = this.nodes.elements();
+		Node currentNode;
+		
+		while(nodes.hasMoreElements()) {
+			currentNode = nodes.nextElement();
+			if (currentNode.getBoundsInParent().intersects(targetNode.getBoundsInParent())){
 				System.out.print("fuck");
 				return true;
 			}

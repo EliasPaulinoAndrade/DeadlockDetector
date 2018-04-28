@@ -4,8 +4,8 @@ public class MyEdge<PathElement> {
 	private MyNode<?> destinationVertex;
 	private PathElement pathInformation;
 	
-	public MyEdge(MyNode<?> node2, PathElement pathInformation) {
-		this.destinationVertex = node2;
+	public MyEdge(MyNode<?> node, PathElement pathInformation) {
+		this.destinationVertex = node;
 		this.pathInformation = pathInformation;
 	}
 

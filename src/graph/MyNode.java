@@ -34,6 +34,14 @@ public class MyNode<NodeElement>{
 		return this.edges.remove(edge);
 	}
 	
+	public MyEdge<?> getEdgeAt(Integer index) {
+		return this.edges.get(index);
+	}
+	
+	public Integer numberOfEdges() {
+		return this.edges.size();
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder nodeStringBuilder = new StringBuilder();
