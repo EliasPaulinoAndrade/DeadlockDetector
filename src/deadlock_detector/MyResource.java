@@ -3,6 +3,8 @@ package deadlock_detector;
 import graph.MyNodeValue;
 import java.util.concurrent.Semaphore;
 
+/** it represents the resource item from the operational system*/
+
 public class MyResource implements MyNodeValue, Runnable{
 	private String name;	
 	private Semaphore semaphore;

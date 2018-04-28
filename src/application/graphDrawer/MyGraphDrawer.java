@@ -13,6 +13,15 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
+
+/*its the area where the graph is drawed
+ * 
+ * there are a datasource and delegate, they delegate the necessity to know things about the particular graph implementations, how: number of nodes,
+ * number of edges, color, set the nodes views, do something when a node is cliked and etc. 
+ * 
+ * this class use the delegate and datasource to draw the graph with the user especifications caring
+ * */
+
 public class MyGraphDrawer extends Region{
 	private MyGraphDrawerDataSource dataSource;
 	private MyGraphDrawerDelegate delegate;
@@ -58,6 +67,9 @@ public class MyGraphDrawer extends Region{
 	}
 	
 	private void drawEdges() {
+		/*
+		 * iterate over all the nodes while drawing it edges
+		 * */
 		if(dataSource == null) {
 			return ;
 		}
@@ -99,6 +111,10 @@ public class MyGraphDrawer extends Region{
 	}
 	
 	private void drawNodes() {
+		/*
+		 * it asks the datasource how each node must be drawed, and do it
+		 * */
+		
 		if(dataSource == null) {
 			return ;
 		}
@@ -124,6 +140,11 @@ public class MyGraphDrawer extends Region{
 	}
 	
 	private void setNodeInRandomUnusedPoint(MySize containerSize, Node targetNode) {
+		/*
+		 * set a node good position based on the container size, node size, and other nodes position, it will try a randomic position
+		 * until find the good one
+		 * */
+		
 		Random random = new Random();
 
 		int nodeMaxWidth = (int) Math.ceil(dataSource.graphDrawerNodeMaxSize(this).getWidth().doubleValue());
@@ -144,6 +165,11 @@ public class MyGraphDrawer extends Region{
 	}
 	
 	private Boolean checkSafePoint(Node targetNode) {
+		/*
+		 * check if the target node is in a good position: it never intersects other nodes of the graph
+		 * 
+		 * */
+		
 		Enumeration<Node> nodes = this.nodes.elements();
 		Node currentNode;
 		

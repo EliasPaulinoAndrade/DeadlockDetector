@@ -2,6 +2,7 @@ package deadlock_detector;
 
 import graph.MyGraph;
 
+/*it represents the operational system, it is resposible by detecting deadlocks with a cicle algorithm, and finish them.*/
 public class MyOpSystem implements Runnable{
 	private MyGraph graph;
 	private Double restTime;

@@ -2,6 +2,8 @@ package deadlock_detector;
 
 import graph.MyNodeValue;
 
+/* it is resposible for trying to allocate new resources from time to time*/
+
 public class MyProcess implements MyNodeValue, Runnable{
 	private String name;
 	private Integer processIdentifier;

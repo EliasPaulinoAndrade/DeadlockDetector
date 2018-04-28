@@ -3,6 +3,8 @@ package application.graphDrawer;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 
+
+/*implementations of this interfaces will be resposible for say especifications about the graph view*/
 public interface MyGraphDrawerDataSource {
 	Integer graphDrawerNumberOfNodes(MyGraphDrawer graphDrawer);
 	Node graphDrawerNodeViewForNodeAtIndex(MyGraphDrawer graphDrawer, Integer index);
