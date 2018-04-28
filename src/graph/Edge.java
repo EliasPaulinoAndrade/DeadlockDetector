@@ -1,27 +1,27 @@
 package graph;
 
-public class Edge<Element> {
-	private Node destinationVertex;
-	private Element pathInformation;
+public class Edge<NodeElement, PathElement> {
+	private Node<NodeElement, PathElement> destinationVertex;
+	private PathElement pathInformation;
 	
-	public Edge(Node destinationVertex, Element pathInformation) {
+	public Edge(Node<NodeElement, PathElement> destinationVertex, PathElement pathInformation) {
 		this.destinationVertex = destinationVertex;
 		this.pathInformation = pathInformation;
 	}
 
-	public Node getDestinationVertex() {
+	public Node<NodeElement, PathElement> getDestinationVertex() {
 		return destinationVertex;
 	}
 
-	public void setDestinationVertex(Node destinationVertex) {
+	public void setDestinationVertex(Node<NodeElement, PathElement> destinationVertex) {
 		this.destinationVertex = destinationVertex;
 	}
 
-	public Element getPathInformation() {
+	public PathElement getPathInformation() {
 		return pathInformation;
 	}
 
-	public void setPathInformation(Element pathInformation) {
+	public void setPathInformation(PathElement pathInformation) {
 		this.pathInformation = pathInformation;
 	}
 	
