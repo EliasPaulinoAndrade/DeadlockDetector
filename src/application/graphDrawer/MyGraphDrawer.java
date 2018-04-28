@@ -8,11 +8,15 @@ import java.util.Random;
 import javafx.scene.Node;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 public class MyGraphDrawer extends Region{
 	private MyGraphDrawerDataSource dataSource;
+	private MyGraphDrawerDelegate delegate;
+	
 	private Dictionary<Integer, Node> nodes;
 	
 	public MyGraphDrawer() {
@@ -29,6 +33,15 @@ public class MyGraphDrawer extends Region{
 		this.dataSource = dataSource;
 	}
 	
+	
+	public MyGraphDrawerDelegate getDelegate() {
+		return delegate;
+	}
+
+	public void setDelegate(MyGraphDrawerDelegate delegate) {
+		this.delegate = delegate;
+	}
+
 	public void drawGraph() {
 		if(dataSource == null) {
 			return ;
@@ -76,6 +89,7 @@ public class MyGraphDrawer extends Region{
 				
 				
 				currentLineEdge.setStroke(dataSource.graphDrawerEdgesColor(this));
+				currentLineEdge.setStrokeWidth(dataSource.graphDrawerEdgeStrokeWidth(this));
 				this.getChildren().add(currentLineEdge);
 			
 				currentLineEdge.toBack();
@@ -91,10 +105,18 @@ public class MyGraphDrawer extends Region{
 		
 		MySize rootSize = dataSource.graphDrawerGraphSize(this);
 		Integer numberOfNodes = dataSource.graphDrawerNumberOfNodes(this);
+		MySize containerSize = dataSource.graphDrawerNodeMaxSize(this);
 		
 		Node currentNode;
+		Pane containerNode;
 		for(int nodeIndex = 0; nodeIndex < numberOfNodes; nodeIndex++) {
+			containerNode = new StackPane();
+			containerNode.minWidth(containerSize.getWidth());
+			containerNode.minHeight(containerSize.getHeight());
+			
 			currentNode = dataSource.graphDrawerNodeViewForNodeAtIndex(this, nodeIndex);
+			
+			containerNode.getChildren().add(currentNode);
 			setNodeInRandomUnusedPoint(rootSize, currentNode);
 			this.nodes.put(nodeIndex, currentNode);
 			this.getChildren().add(currentNode);
@@ -108,6 +130,7 @@ public class MyGraphDrawer extends Region{
 		int nodeMaxHeight = (int) Math.ceil(dataSource.graphDrawerNodeMaxSize(this).getHeight().doubleValue());
 		
 		Boolean intersects = true;
+		
 		while(intersects == true) {
 			int x = random.nextInt(containerSize.getWidth().intValue() - nodeMaxWidth);
 			int y = random.nextInt(containerSize.getHeight().intValue() - nodeMaxHeight);
@@ -115,12 +138,12 @@ public class MyGraphDrawer extends Region{
 			targetNode.setLayoutX(x);
 			targetNode.setLayoutY(y);
 			
-			intersects = checkUsedPoint(targetNode);
+			intersects = checkSafePoint(targetNode);
 		}
 		
 	}
 	
-	private Boolean checkUsedPoint(Node targetNode) {
+	private Boolean checkSafePoint(Node targetNode) {
 		Enumeration<Node> nodes = this.nodes.elements();
 		Node currentNode;
 		
@@ -133,4 +156,5 @@ public class MyGraphDrawer extends Region{
 		}
 		return false;
 	}
+
 }

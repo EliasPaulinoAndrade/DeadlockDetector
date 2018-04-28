@@ -1,6 +1,8 @@
 package application.graphDrawer;
 
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.layout.BorderPane;
 
 import javafx.scene.paint.Color;
@@ -17,6 +19,7 @@ public class MyGraphLine extends BorderPane {
 	private Double endY;
 	private Double middleX;
 	private Double middleY;
+	
 	
 	public MyGraphLine(Double startX, Double startY, Double endX, Double endY) {
 		super();
@@ -35,7 +38,6 @@ public class MyGraphLine extends BorderPane {
 		
 		this.mainLine = new Line(0, 0, this.endX, this.endY);
 		
-		
 		Double angle = Math.atan2((this.endY - this.startY), (this.endX - this.startX)) - Math.PI / 2.0;
 		Double sin = Math.sin(angle);
 		Double cos = Math.cos(angle);
@@ -50,6 +52,14 @@ public class MyGraphLine extends BorderPane {
         this.arrowLine1 = new Line(this.middleX,this.middleY,x1,y1);
         this.arrowLine2 = new Line(this.middleX,this.middleY,x2,y2);
         
+        this.arrowLine1.setOnMouseEntered(this.enteredChildren);
+        this.arrowLine2.setOnMouseEntered(this.enteredChildren);
+        this.mainLine.setOnMouseEntered(this.enteredChildren);
+        
+        this.arrowLine1.setOnMouseExited(this.exitedChildren);
+        this.arrowLine2.setOnMouseExited(this.exitedChildren);
+        this.mainLine.setOnMouseExited(this.exitedChildren);
+        
 		this.getChildren().add(this.mainLine);
 		this.getChildren().add(this.arrowLine1);
 		this.getChildren().add(this.arrowLine2);
@@ -60,5 +70,36 @@ public class MyGraphLine extends BorderPane {
 		this.arrowLine1.setStroke(color);
 		this.arrowLine2.setStroke(color);
 	}
+
+	public void setStrokeWidth(Double width) {
+		this.mainLine.setStrokeWidth(width);
+		this.arrowLine1.setStrokeWidth(width);
+		this.arrowLine2.setStrokeWidth(width);
+	}
+
+	private EventHandler<Event> enteredChildren = new EventHandler<Event>() {
+		
+		@Override
+		public void handle(Event event) {
+
+			MyGraphLine.this.mainLine.setStrokeWidth(MyGraphLine.this.mainLine.getStrokeWidth() + 1);
+			MyGraphLine.this.arrowLine1.setStrokeWidth(MyGraphLine.this.arrowLine1.getStrokeWidth() + 1);
+			MyGraphLine.this.arrowLine2.setStrokeWidth(MyGraphLine.this.arrowLine2.getStrokeWidth() + 1);
+			MyGraphLine.this.setOpacity(0.7);
+			MyGraphLine.this.toFront();
+		}
+	};
 	
+	private EventHandler<Event> exitedChildren  = new EventHandler<Event>() {
+		
+		@Override
+		public void handle(Event event) {
+
+			MyGraphLine.this.mainLine.setStrokeWidth(MyGraphLine.this.mainLine.getStrokeWidth() - 1);
+			MyGraphLine.this.arrowLine1.setStrokeWidth(MyGraphLine.this.arrowLine1.getStrokeWidth() - 1);
+			MyGraphLine.this.arrowLine2.setStrokeWidth(MyGraphLine.this.arrowLine2.getStrokeWidth() - 1);
+			MyGraphLine.this.setOpacity(1);
+			MyGraphLine.this.toBack();
+		}
+	};
 }

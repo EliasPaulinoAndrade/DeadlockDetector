@@ -12,5 +12,5 @@ public interface MyGraphDrawerDataSource {
 	MySize graphDrawerNodeMaxSize(MyGraphDrawer graphDrawer);
 	Integer graphDrawerNumberOfEdgesStartingFromNodeAtIndex(MyGraphDrawer graphDrawer, Integer index);
 	Integer graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(MyGraphDrawer graphDrawer, Integer edgeIndex, Integer nodeIndex);
-	Double graphDrawerMinDistanceBetweenNodes(MyGraphDrawer graphDrawer);
+	Double graphDrawerEdgeStrokeWidth(MyGraphDrawer graphDrawer);
 }

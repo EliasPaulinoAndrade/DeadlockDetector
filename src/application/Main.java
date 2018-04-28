@@ -2,6 +2,7 @@ package application;
 	
 import application.graphDrawer.MyGraphDrawer;
 import application.graphDrawer.MyGraphDrawerDataSource;
+import application.graphDrawer.MyGraphDrawerDelegate;
 import application.graphDrawer.MySize;
 import deadlock_detector.MyProcess;
 import deadlock_detector.MyProcessNode;
@@ -18,10 +19,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 
-public class Main extends Application implements MyGraphDrawerDataSource {
+public class Main extends Application implements MyGraphDrawerDataSource, MyGraphDrawerDelegate {
 	
 	private MyGraph graph;
 	
@@ -50,33 +52,26 @@ public class Main extends Application implements MyGraphDrawerDataSource {
 		MyNode<?> node3 = new MyResourceNode<>(new MyResource("C"), 2);
 		MyNode<?> node4 = new MyProcessNode<>(new MyProcess("1"), 3);
 		
-		
-		MyEdge<?> edge = new MyEdge<>(node, 10);
-		//MyEdge<?> edge2 = new MyEdge<>(node, 5);
-		MyEdge<?> edge3 = new MyEdge<>(node3, 17);
-		//MyEdge<?> edge4 = new MyEdge<>(node, 3);
-		
 		graph.addNode(node);
 		graph.addNode(node2);
 		graph.addNode(node3);
 		graph.addNode(node4);
 		
-		node.addEdge(edge);
-		node.addEdge(edge3);
+		MyEdge<?> edge = new MyEdge<>(node, 10);
+		MyEdge<?> edge3 = new MyEdge<>(node3, 17);
+		
+		node4.addEdge(edge3);
 		node4.addEdge(edge);
 		
-		//node2.addEdge(edge2);
-		
-		//node3.addEdge(edge4);
-		
-		MyGraphDrawer btn = new MyGraphDrawer();
-		btn.setDataSource(this);
-		
-		btn.drawGraph();
+		MyGraphDrawer drawer = new MyGraphDrawer();
+		drawer.setDataSource(this);
+		drawer.setDelegate(this);
 		
         Pane root = new Pane();
 		
-        root.getChildren().add(btn);
+        root.getChildren().add(drawer);
+        
+        drawer.drawGraph();
         
         return root;
 	}
@@ -89,15 +84,22 @@ public class Main extends Application implements MyGraphDrawerDataSource {
 
 	@Override
 	public Node graphDrawerNodeViewForNodeAtIndex(MyGraphDrawer graphDrawer, Integer index) {
-		StackPane nodeView = new StackPane();
+		
 		MyNode<?> node = this.graph.getNodeAt(index);
-		
-		Circle nodeCircle = new Circle(30);
-		nodeCircle.setFill(Color.WHITE);
-		
+		StackPane nodeView = new StackPane();
 		Text nodeText = new Text(node.getValue().getStringValue());
-		
-		nodeView.getChildren().addAll(nodeCircle, nodeText);
+		if(node instanceof MyResourceNode<?>) {
+			Rectangle nodeRect = new Rectangle(40, 40);
+			nodeRect.setFill(Color.WHITE);
+			
+			nodeView.getChildren().addAll(nodeRect, nodeText);
+		}
+		else {
+			Circle nodeCircle = new Circle(20);
+			nodeCircle.setFill(Color.WHITE);
+			
+			nodeView.getChildren().addAll(nodeCircle, nodeText);
+		}
 		
 		return nodeView;
 	}
@@ -117,7 +119,7 @@ public class Main extends Application implements MyGraphDrawerDataSource {
 	@Override
 	public MySize graphDrawerNodeMaxSize(MyGraphDrawer graphDrawer) {
 
-		return new MySize(60, 60);
+		return new MySize(100, 100);
 	}
 
 	@Override
@@ -138,8 +140,9 @@ public class Main extends Application implements MyGraphDrawerDataSource {
 	}
 
 	@Override
-	public Double graphDrawerMinDistanceBetweenNodes(MyGraphDrawer graphDrawer) {
-		
-		return 50.0;
+	public Double graphDrawerEdgeStrokeWidth(MyGraphDrawer graphDrawer) {
+
+		return 3.0;
 	}
+
 }
