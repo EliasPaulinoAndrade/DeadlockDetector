@@ -26,11 +26,11 @@ public class MyNode<NodeElement extends MyNodeValue>{
 		this.value = value;
 	}
 	
-	public Boolean addEdge(MyEdge<?> edge) {
+	protected Boolean addEdge(MyEdge<?> edge) {
 		return this.edges.add(edge);
 	}
 	
-	public Boolean removeEdge(MyEdge<?> edge) {
+	protected Boolean removeEdge(MyEdge<?> edge) {
 		return this.edges.remove(edge);
 	}
 	

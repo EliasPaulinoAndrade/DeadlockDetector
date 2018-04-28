@@ -50,7 +50,7 @@ public class Main extends Application implements MyGraphDrawerDataSource, MyGrap
 		MyNode<?> node = new MyResourceNode<>(new MyResource("A"), 0);
 		MyNode<?> node2 = new MyResourceNode<>(new MyResource("B"), 1);
 		MyNode<?> node3 = new MyResourceNode<>(new MyResource("C"), 2);
-		MyNode<?> node4 = new MyProcessNode<>(new MyProcess("1"), 3);
+		MyNode<?> node4 = new MyProcessNode<>(new MyProcess("1", 0, 5.0, 5.0), 3);
 		
 		graph.addNode(node);
 		graph.addNode(node2);
@@ -60,8 +60,8 @@ public class Main extends Application implements MyGraphDrawerDataSource, MyGrap
 		MyEdge<?> edge = new MyEdge<>(node, 10);
 		MyEdge<?> edge3 = new MyEdge<>(node3, 17);
 		
-		node4.addEdge(edge3);
-		node4.addEdge(edge);
+		graph.addEdgeToNode(edge3, node4);
+		graph.addEdgeToNode(edge, node4);
 		
 		MyGraphDrawer drawer = new MyGraphDrawer();
 		drawer.setDataSource(this);

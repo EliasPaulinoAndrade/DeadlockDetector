@@ -9,6 +9,18 @@ public class MyGraph{
 	public MyGraph() {
 		vertices = new LinkedList<>();
 	}
+	
+	public Boolean addEdgeToNode(MyEdge<?> edge, MyNode<?> node) {
+		MyNode<?> destinationNode = edge.getDestinationVertex();
+		if(vertices.contains(destinationNode)){
+			return node.addEdge(edge);
+		}
+		return false;
+	}
+	
+	public Boolean removeEdgeFromNode(MyEdge<?> edge, MyNode<?> node) {
+		return node.removeEdge(edge);
+	}
 
 	public Boolean addNode(MyNode<?> node) {
 		return this.vertices.add(node);
