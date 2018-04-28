@@ -21,6 +21,10 @@ public class MyGraph{
 	public Integer numberOfNodes() {
 		return this.vertices.size();
 	}
+	
+	public MyNode<?> getNodeAt(Integer index){
+		return vertices.get(index);
+	}
 
 	@Override
 	public String toString() {

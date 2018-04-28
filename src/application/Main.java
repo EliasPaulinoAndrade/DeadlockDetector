@@ -11,7 +11,10 @@ import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 
 
 public class Main extends Application implements GraphDrawerDataSource {
@@ -57,7 +60,6 @@ public class Main extends Application implements GraphDrawerDataSource {
 		
 		node3.addEdge(edge4);
 		
-		
 		GraphDrawer btn = new GraphDrawer();
 		btn.setDataSource(this);
 		
@@ -78,8 +80,17 @@ public class Main extends Application implements GraphDrawerDataSource {
 
 	@Override
 	public Node graphDrawerNodeViewForIndex(GraphDrawer graphDrawer, Integer index) {
+		StackPane nodeView = new StackPane();
+		MyNode<?> node = this.graph.getNodeAt(index);
 		
-		return null;
+		Circle nodeCircle = new Circle(60);
+		nodeCircle.setFill(Color.WHITE);
+		
+		Text nodeText = new Text(node.getValue().toString());
+		
+		nodeView.getChildren().addAll(nodeCircle, nodeText);
+		
+		return nodeView;
 	}
 
 	@Override
@@ -92,5 +103,11 @@ public class Main extends Application implements GraphDrawerDataSource {
 	public Color graphDrawerGraphColor(GraphDrawer graphDrawer) {
 		
 		return Color.BLACK;
+	}
+
+	@Override
+	public MySize graphDrawerNodeMaxSize(GraphDrawer graphDrawer) {
+		// TODO Auto-generated method stub
+		return new MySize(120, 120);
 	}
 }

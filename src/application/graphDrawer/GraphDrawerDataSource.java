@@ -8,4 +8,5 @@ public interface GraphDrawerDataSource {
 	Node graphDrawerNodeViewForIndex(GraphDrawer graphDrawer, Integer index);
 	MySize graphDrawerGraphSize(GraphDrawer graphDrawer);
 	Color graphDrawerGraphColor(GraphDrawer graphDrawer);
+	MySize graphDrawerNodeMaxSize(GraphDrawer graphDrawer);
 }
