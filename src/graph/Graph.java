@@ -10,11 +10,22 @@ public class Graph<NodeElement, PathElement>{
 		vertices = new LinkedList<>();
 	}
 
-	public List<Node<NodeElement, PathElement>> getVertices() {
-		return vertices;
+	public Boolean addNode(Node<NodeElement, PathElement> node) {
+		return this.vertices.add(node);
+	}
+	
+	public Boolean removeNode(Node<NodeElement, PathElement> node) {
+		return this.vertices.remove(node);
 	}
 
-	public void setVertices(List<Node<NodeElement, PathElement>> vertices) {
-		this.vertices = vertices;
+	@Override
+	public String toString() {
+		StringBuilder graphStringBuilder = new StringBuilder();
+		
+		for(Node<NodeElement, PathElement> node : vertices) {
+			graphStringBuilder.append(node);
+			graphStringBuilder.append("\n");
+		}
+		return graphStringBuilder.toString();
 	}
 }

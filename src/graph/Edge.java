@@ -25,4 +25,15 @@ public class Edge<NodeElement, PathElement> {
 		this.pathInformation = pathInformation;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder edgeStringBuilder = new StringBuilder();
+		
+		edgeStringBuilder.append("[(path_info: " + pathInformation);
+		edgeStringBuilder.append(") => (to_node_id: ");
+		edgeStringBuilder.append(destinationVertex.getId() + ")]");
+		
+		return edgeStringBuilder.toString();
+		
+	}
 }
