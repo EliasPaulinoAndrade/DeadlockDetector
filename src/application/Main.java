@@ -1,8 +1,12 @@
 package application;
 	
-import application.graphDrawer.GraphDrawer;
-import application.graphDrawer.GraphDrawerDataSource;
+import application.graphDrawer.MyGraphDrawer;
+import application.graphDrawer.MyGraphDrawerDataSource;
 import application.graphDrawer.MySize;
+import deadlock_detector.MyProcess;
+import deadlock_detector.MyProcessNode;
+import deadlock_detector.MyResource;
+import deadlock_detector.MyResourceNode;
 import graph.MyEdge;
 import graph.MyGraph;
 import graph.MyNode;
@@ -17,7 +21,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 
-public class Main extends Application implements GraphDrawerDataSource {
+public class Main extends Application implements MyGraphDrawerDataSource {
 	
 	private MyGraph graph;
 	
@@ -40,27 +44,32 @@ public class Main extends Application implements GraphDrawerDataSource {
 	
 	private Pane setup() {
 		graph = new MyGraph();
-		MyNode<?> node = new MyNode<>(1, 0);
-		MyNode<?> node2 = new MyNode<>(5, 1);
-		MyNode<?> node3 = new MyNode<>(20, 2);
+	
+		MyNode<?> node = new MyResourceNode<>(new MyResource("A"), 0);
+		MyNode<?> node2 = new MyResourceNode<>(new MyResource("B"), 1);
+		MyNode<?> node3 = new MyResourceNode<>(new MyResource("C"), 2);
+		MyNode<?> node4 = new MyProcessNode<>(new MyProcess("1"), 3);
 		
-		MyEdge<?> edge = new MyEdge<>(node2, 10);
-		MyEdge<?> edge2 = new MyEdge<>(node, 5);
+		
+		MyEdge<?> edge = new MyEdge<>(node, 10);
+		//MyEdge<?> edge2 = new MyEdge<>(node, 5);
 		MyEdge<?> edge3 = new MyEdge<>(node3, 17);
-		MyEdge<?> edge4 = new MyEdge<>(node, 3);
+		//MyEdge<?> edge4 = new MyEdge<>(node, 3);
 		
 		graph.addNode(node);
 		graph.addNode(node2);
 		graph.addNode(node3);
+		graph.addNode(node4);
 		
 		node.addEdge(edge);
 		node.addEdge(edge3);
+		node4.addEdge(edge);
 		
 		//node2.addEdge(edge2);
 		
 		//node3.addEdge(edge4);
 		
-		GraphDrawer btn = new GraphDrawer();
+		MyGraphDrawer btn = new MyGraphDrawer();
 		btn.setDataSource(this);
 		
 		btn.drawGraph();
@@ -73,20 +82,20 @@ public class Main extends Application implements GraphDrawerDataSource {
 	}
 
 	@Override
-	public Integer graphDrawerNumberOfNodes(GraphDrawer graphDrawer) {
+	public Integer graphDrawerNumberOfNodes(MyGraphDrawer graphDrawer) {
 		
 		return this.graph.numberOfNodes();
 	}
 
 	@Override
-	public Node graphDrawerNodeViewForNodeAtIndex(GraphDrawer graphDrawer, Integer index) {
+	public Node graphDrawerNodeViewForNodeAtIndex(MyGraphDrawer graphDrawer, Integer index) {
 		StackPane nodeView = new StackPane();
 		MyNode<?> node = this.graph.getNodeAt(index);
 		
 		Circle nodeCircle = new Circle(30);
 		nodeCircle.setFill(Color.WHITE);
 		
-		Text nodeText = new Text(node.getValue().toString());
+		Text nodeText = new Text(node.getValue().getStringValue());
 		
 		nodeView.getChildren().addAll(nodeCircle, nodeText);
 		
@@ -94,42 +103,42 @@ public class Main extends Application implements GraphDrawerDataSource {
 	}
 
 	@Override
-	public MySize graphDrawerGraphSize(GraphDrawer graphDrawer) {
+	public MySize graphDrawerGraphSize(MyGraphDrawer graphDrawer) {
 	
 		return new MySize(400, 400);
 	}
 
 	@Override
-	public Color graphDrawerGraphColor(GraphDrawer graphDrawer) {
+	public Color graphDrawerGraphColor(MyGraphDrawer graphDrawer) {
 		
 		return Color.BLACK;
 	}
 
 	@Override
-	public MySize graphDrawerNodeMaxSize(GraphDrawer graphDrawer) {
+	public MySize graphDrawerNodeMaxSize(MyGraphDrawer graphDrawer) {
 
 		return new MySize(60, 60);
 	}
 
 	@Override
-	public Integer graphDrawerNumberOfEdgesStartingFromNodeAtIndex(GraphDrawer graphDrawer, Integer index) {
+	public Integer graphDrawerNumberOfEdgesStartingFromNodeAtIndex(MyGraphDrawer graphDrawer, Integer index) {
 
 		return this.graph.getNodeAt(index).numberOfEdges();
 	}
 
 	@Override
-	public Integer graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(GraphDrawer graphDrawer, Integer edgeIndex, Integer nodeIndex) {
+	public Integer graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(MyGraphDrawer graphDrawer, Integer edgeIndex, Integer nodeIndex) {
 		return this.graph.getNodeAt(nodeIndex).getEdgeAt(edgeIndex).getDestinationVertex().getId();
 	}
 
 	@Override
-	public Color graphDrawerEdgesColor(GraphDrawer graphDrawer) {
+	public Color graphDrawerEdgesColor(MyGraphDrawer graphDrawer) {
 		
 		return Color.RED;
 	}
 
 	@Override
-	public Double graphDrawerMinDistanceBetweenNodes(GraphDrawer graphDrawer) {
+	public Double graphDrawerMinDistanceBetweenNodes(MyGraphDrawer graphDrawer) {
 		
 		return 50.0;
 	}

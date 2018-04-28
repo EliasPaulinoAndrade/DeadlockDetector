@@ -3,7 +3,7 @@ package graph;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MyNode<NodeElement>{
+public class MyNode<NodeElement extends MyNodeValue>{
 	private Integer id;
 	private NodeElement value;
 	private List<MyEdge<?>> edges;
@@ -47,7 +47,7 @@ public class MyNode<NodeElement>{
 		StringBuilder nodeStringBuilder = new StringBuilder();
 		
 		nodeStringBuilder.append("[id: " + id);
-		nodeStringBuilder.append(", value: " + value + "]");
+		nodeStringBuilder.append(", value: " + value.getStringValue() + "]");
 		for(MyEdge<?> edge : edges) {
 			nodeStringBuilder.append("  ->  ");
 			nodeStringBuilder.append(edge);

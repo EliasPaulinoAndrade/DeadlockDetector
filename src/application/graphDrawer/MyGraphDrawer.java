@@ -11,21 +11,21 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 
-public class GraphDrawer extends Region{
-	private GraphDrawerDataSource dataSource;
+public class MyGraphDrawer extends Region{
+	private MyGraphDrawerDataSource dataSource;
 	private Dictionary<Integer, Node> nodes;
 	
-	public GraphDrawer() {
+	public MyGraphDrawer() {
 		super();
 		this.nodes = new Hashtable<>();
 		
 	}
 
-	public GraphDrawerDataSource getDataSource() {
+	public MyGraphDrawerDataSource getDataSource() {
 		return dataSource;
 	}
 
-	public void setDataSource(GraphDrawerDataSource dataSource) {
+	public void setDataSource(MyGraphDrawerDataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 	
@@ -56,7 +56,7 @@ public class GraphDrawer extends Region{
 		Node currentNode;
 		Integer currentDestination;
 		Node destinationNode;
-		GraphLine currentLineEdge;
+		MyGraphLine currentLineEdge;
 		while(nodeIndices.hasMoreElements()) {
 			
 			currentNodeIndex = nodeIndices.nextElement();
@@ -67,7 +67,7 @@ public class GraphDrawer extends Region{
 				currentDestination = dataSource.graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(this, currentEdgeIndexFromNode, currentNodeIndex);
 				destinationNode = this.nodes.get(currentDestination);
 				
-				currentLineEdge = new GraphLine(
+				currentLineEdge = new MyGraphLine(
 						currentNode.getLayoutX() + currentNode.getBoundsInParent().getWidth()/2, 
 						currentNode.getLayoutY() + currentNode.getBoundsInParent().getWidth()/2,
 						destinationNode.getLayoutX() +  destinationNode.getBoundsInParent().getWidth()/2, 

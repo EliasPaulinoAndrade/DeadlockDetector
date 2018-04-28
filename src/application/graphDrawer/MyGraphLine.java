@@ -6,23 +6,23 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
-public class GraphLine extends BorderPane {
+public class MyGraphLine extends BorderPane {
 	private Line mainLine;
 	private Line arrowLine1;
 	private Line arrowLine2;
 	
-	private double startX;
-	private double startY;
-	private double endX;
-	private double endY;
-	private double middleX;
-	private double middleY;
+	private Double startX;
+	private Double startY;
+	private Double endX;
+	private Double endY;
+	private Double middleX;
+	private Double middleY;
 	
-	public GraphLine(double startX, double startY, double endX, double endY) {
+	public MyGraphLine(Double startX, Double startY, Double endX, Double endY) {
 		super();
 		
-		this.startX = 0;
-		this.startY = 0;
+		this.startX = 0.0;
+		this.startY = 0.0;
 		this.endX = endX - startX;
 		this.endY = endY - startY;
 		this.middleX = (this.startX + this.endX)/2;
@@ -36,17 +36,17 @@ public class GraphLine extends BorderPane {
 		this.mainLine = new Line(0, 0, this.endX, this.endY);
 		
 		
-		double angle = Math.atan2((this.endY - this.startY), (this.endX - this.startX)) - Math.PI / 2.0;
-		double sin = Math.sin(angle);
-        double cos = Math.cos(angle);
+		Double angle = Math.atan2((this.endY - this.startY), (this.endX - this.startX)) - Math.PI / 2.0;
+		Double sin = Math.sin(angle);
+		Double cos = Math.cos(angle);
        
         
-        double x1 = (- 1.0 / 2.0 * cos + Math.sqrt(3) / 2 * sin) * 10 + this.middleX;
-        double y1 = (- 1.0 / 2.0 * sin - Math.sqrt(3) / 2 * cos) * 10 + this.middleY;
-        double x2 = (1.0 / 2.0 * cos + Math.sqrt(3) / 2 * sin) * 10 + this.middleX;
-        double y2 = (1.0 / 2.0 * sin - Math.sqrt(3) / 2 * cos) * 10 + this.middleY;
+		Double x1 = (- 1.0 / 2.0 * cos + Math.sqrt(3) / 2 * sin) * 10 + this.middleX;
+		Double y1 = (- 1.0 / 2.0 * sin - Math.sqrt(3) / 2 * cos) * 10 + this.middleY;
+		Double x2 = (1.0 / 2.0 * cos + Math.sqrt(3) / 2 * sin) * 10 + this.middleX;
+		Double y2 = (1.0 / 2.0 * sin - Math.sqrt(3) / 2 * cos) * 10 + this.middleY;
         
-        
+		
         this.arrowLine1 = new Line(this.middleX,this.middleY,x1,y1);
         this.arrowLine2 = new Line(this.middleX,this.middleY,x2,y2);
         
