@@ -7,11 +7,13 @@ import java.util.concurrent.Semaphore;
 
 public class MyResource implements MyNodeValue, Runnable{
 	private String name;	
+	private String resourceIdentifier;
 	private Semaphore semaphore;
 	
-	public MyResource(String name) {
+	public MyResource(String name, String resourceIdentifier) {
 		super();
 		this.name = name;
+		this.resourceIdentifier = resourceIdentifier;
 		this.semaphore = new Semaphore(1);
 	}	
 
@@ -30,6 +32,14 @@ public class MyResource implements MyNodeValue, Runnable{
 
 	public void setSemaphore(Semaphore semaphore) {
 		this.semaphore = semaphore;
+	}
+
+	public String getResourceIdentifier() {
+		return resourceIdentifier;
+	}
+
+	public void setResourceIdentifier(String resourceIdentifier) {
+		this.resourceIdentifier = resourceIdentifier;
 	}
 
 	@Override

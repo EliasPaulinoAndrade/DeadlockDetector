@@ -1,5 +1,7 @@
 package application;
 	
+import java.io.IOException;
+
 import application.graphDrawer.MyGraphDrawer;
 import application.graphDrawer.MyGraphDrawerDataSource;
 import application.graphDrawer.MyGraphDrawerDelegate;
@@ -12,6 +14,7 @@ import graph.MyEdge;
 import graph.MyGraph;
 import graph.MyNode;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -22,8 +25,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-
-
 public class Main extends Application implements MyGraphDrawerDataSource, MyGraphDrawerDelegate {
 	
 	private MyGraph graph;
@@ -31,10 +32,15 @@ public class Main extends Application implements MyGraphDrawerDataSource, MyGrap
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			Scene scene = new Scene(setup(),600,600);
+
+			Pane root = setup();
+			
+			
+			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 	        
 			primaryStage.setScene(scene);
+
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -45,12 +51,12 @@ public class Main extends Application implements MyGraphDrawerDataSource, MyGrap
 		launch(args);
 	}
 	
-	private Pane setup() {
+	private Pane setup() throws IOException {
 		graph = new MyGraph();
 	
-		MyNode<?> node = new MyResourceNode<>(new MyResource("A"), 0);
-		MyNode<?> node2 = new MyResourceNode<>(new MyResource("B"), 1);
-		MyNode<?> node3 = new MyResourceNode<>(new MyResource("C"), 2);
+		MyNode<?> node = new MyResourceNode<>(new MyResource("A", "0"), 0);
+		MyNode<?> node2 = new MyResourceNode<>(new MyResource("B", "1"), 1);
+		MyNode<?> node3 = new MyResourceNode<>(new MyResource("C", "2"), 2);
 		MyNode<?> node4 = new MyProcessNode<>(new MyProcess("1", 0, 5.0, 5.0), 3);
 		
 		graph.addNode(node);
@@ -68,11 +74,19 @@ public class Main extends Application implements MyGraphDrawerDataSource, MyGrap
 		drawer.setDataSource(this);
 		drawer.setDelegate(this);
 		
+		FXMLLoader loader = new FXMLLoader();
+	    loader.setLocation(Main.class.getResource("MainScreen.fxml"));
+		Pane helloPane = loader.load();
+	    
+	    
         Pane root = new Pane();
 		
-        root.getChildren().add(drawer);
+        root.getChildren().add(helloPane);
         
-        drawer.drawGraph();
+        //drawer.drawGraph();
+        
+       
+        
         
         return root;
 	}
