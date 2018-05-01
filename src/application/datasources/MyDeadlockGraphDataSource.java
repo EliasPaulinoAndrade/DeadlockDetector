@@ -1,16 +1,32 @@
 package application.datasources;
 
+import application.ScreenConstants;
 import application.graphDrawer.MyGraphDrawer;
 import application.graphDrawer.MyGraphDrawerDataSource;
 import application.graphDrawer.MySize;
+import deadlock_detector.MyResource;
 import deadlock_detector.MyResourceNode;
 import graph.MyGraph;
 import graph.MyNode;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -38,21 +54,51 @@ public class MyDeadlockGraphDataSource implements MyGraphDrawerDataSource{
 	public Node graphDrawerNodeViewForNodeAtIndex(MyGraphDrawer graphDrawer, Integer index) {
 		
 		MyNode<?> node = this.graph.getNodeAt(index);
-		StackPane nodeView = new StackPane();
-		Text nodeText = new Text(node.getValue().getStringValue());
+		VBox nodeView = new VBox();
+		
+		BorderStroke stroke = new BorderStroke(
+				Color.GREY, 
+				BorderStrokeStyle.SOLID, 
+				new CornerRadii(10.0), 
+				new BorderWidths(3), 
+				Insets.EMPTY);
+		
+		Pane textCentralizer = new StackPane();
+		
+		Pane textContainer = new StackPane();
+		textContainer.setBorder(new Border(stroke));
+		textContainer.setMaxWidth(60);
+		textCentralizer.getChildren().add(textContainer);
+		
+		Text nodeText = new Text("id: " + node.getValue().getStringValue());
+		nodeText.setFill(Color.WHITE);
+		textContainer.getChildren().add(nodeText);
+		
+		Pane nodeContainer = new StackPane();
 		if(node instanceof MyResourceNode<?>) {
-			Rectangle nodeRect = new Rectangle(40, 40);
-			nodeRect.setFill(Color.WHITE);
-			
-			nodeView.getChildren().addAll(nodeRect, nodeText);
+			MyResource resource = (MyResource) node.getValue();
+			String resourceImagePath = ScreenConstants.defaultResourcesNames.get(resource.getName());
+			if(resourceImagePath == null) {
+				Rectangle nodeRect = new Rectangle(60, 60);
+				nodeRect.setFill(Color.WHITE);
+				nodeContainer.getChildren().add(nodeRect);
+			}
+			else {
+				Image resourceImage = new Image(resourceImagePath);
+				ImageView nodeImage = new ImageView(resourceImage);
+				nodeContainer.getChildren().add(nodeImage);
+			}
 		}
 		else {
-			Circle nodeCircle = new Circle(20);
-			nodeCircle.setFill(Color.WHITE);
+			String processImagePath = ScreenConstants.defaultProcessImage;
+			Image processImage = new Image(processImagePath);
+			ImageView nodeImage = new ImageView(processImage);
 			
-			nodeView.getChildren().addAll(nodeCircle, nodeText);
+			
+			nodeContainer.getChildren().add(nodeImage);
 		}
-		
+
+		nodeView.getChildren().addAll(nodeContainer, textCentralizer);
 		return nodeView;
 	}
 
@@ -71,7 +117,7 @@ public class MyDeadlockGraphDataSource implements MyGraphDrawerDataSource{
 	@Override
 	public MySize graphDrawerNodeMaxSize(MyGraphDrawer graphDrawer) {
 
-		return new MySize(50, 50);
+		return new MySize(100, 100);
 	}
 
 	@Override

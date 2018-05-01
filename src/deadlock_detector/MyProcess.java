@@ -12,8 +12,8 @@ import javafx.application.Platform;
 
 public class MyProcess implements MyNodeValue, Runnable{
 	private String processIdentifier;
-	private Double restTime;
-	private Double activeTime;
+	private Integer restTime;
+	private Integer activeTime;
 	
 	private MyOpSystem opSystem;
 	private MyProcessNode<MyProcess> selfNode;
@@ -23,7 +23,7 @@ public class MyProcess implements MyNodeValue, Runnable{
 	
 	private Random random;
 	
-	public MyProcess(String processIdentifier, Double restTime, Double activeTime, MyOpSystem opSystem) {
+	public MyProcess(String processIdentifier, Integer restTime, Integer activeTime, MyOpSystem opSystem) {
 		super();
 		this.processIdentifier = processIdentifier;
 		this.restTime = restTime;
@@ -177,19 +177,19 @@ public class MyProcess implements MyNodeValue, Runnable{
 		this.processIdentifier = processIdentifier;
 	}
 
-	public Double getRestTime() {
+	public Integer getRestTime() {
 		return restTime;
 	}
 
-	public void setRestTime(Double restTime) {
+	public void setRestTime(Integer restTime) {
 		this.restTime = restTime;
 	}
 
-	public Double getActiveTime() {
+	public Integer getActiveTime() {
 		return activeTime;
 	}
 
-	public void setActiveTime(Double activeTime) {
+	public void setActiveTime(Integer activeTime) {
 		this.activeTime = activeTime;
 	}
 

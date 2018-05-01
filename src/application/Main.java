@@ -36,7 +36,7 @@ public class Main extends Application{
 	private Pane setup() throws IOException {
 		
 		FXMLLoader loader = new FXMLLoader();
-	    loader.setLocation(Main.class.getResource("MainScreen.fxml"));
+	    loader.setLocation(Main.class.getResource("screens/MainScreen.fxml"));
 		Pane mainPane = loader.load();
 	    
         return mainPane;

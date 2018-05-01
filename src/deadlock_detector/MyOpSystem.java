@@ -9,12 +9,12 @@ import graph.MyGraph;
 /*it represents the operational system, it is resposible by detecting deadlocks with a cicle algorithm, and finish them.*/
 public class MyOpSystem implements Runnable{
 	private MyOpGraph graph;
-	private Double restTime;
+	private Integer restTime;
 	private List<MyResourceNode<MyResource>> resources;
 	private List<MyProcessNode<MyProcess>> processes;
 	private MyGraphDrawer drawer;
 	
-	public MyOpSystem(Double restTime, MyGraphDrawer drawer) {
+	public MyOpSystem(Integer restTime, MyGraphDrawer drawer) {
 		super();
 		this.graph = new MyOpGraph();
 		this.restTime = restTime;
@@ -23,7 +23,7 @@ public class MyOpSystem implements Runnable{
 		this.processes = new ArrayList<>();
 	}
 	
-	public MyOpSystem(Double restTime, List<MyResource> resources, MyGraphDrawer drawer) {
+	public MyOpSystem(Integer restTime, List<MyResource> resources, MyGraphDrawer drawer) {
 		super();
 		this.graph = new MyOpGraph();
 		this.restTime = restTime;
@@ -53,11 +53,11 @@ public class MyOpSystem implements Runnable{
 		this.graph = graph;
 	}
 
-	public Double getRestTime() {
+	public Integer getRestTime() {
 		return restTime;
 	}
 
-	public void setRestTime(Double restTime) {
+	public void setRestTime(Integer restTime) {
 		this.restTime = restTime;
 	}
 

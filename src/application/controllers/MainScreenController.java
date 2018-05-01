@@ -3,11 +3,15 @@ package application.controllers;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Main;
+import application.ScreenConstants;
 import deadlock_detector.MyResource;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -31,7 +36,10 @@ public class MainScreenController implements Initializable{
 	@FXML private VBox tableViewContainer;
 	@FXML private CheckBox autoIncrementCheck;
 	@FXML private AnchorPane rootPane;
+	@FXML private TextField opSystemRestTimeField;
+	@FXML private AnchorPane resourcesChoiceBoxContainer;
 	
+	private ChoiceBox<String> resourcesChoiceBox;
 	private TableView<MyResource> resourcesTableView;
 	private TableColumn<MyResource, String> column;
 	private TableColumn<MyResource, String> column2;
@@ -66,7 +74,7 @@ public class MainScreenController implements Initializable{
 		 * using the method receiveData()*/
 		
 		FXMLLoader loader = new FXMLLoader();
-	    loader.setLocation(Main.class.getResource("GraphScreen.fxml"));
+	    loader.setLocation(Main.class.getResource("screens/GraphScreen.fxml"));
 	    
 		Node eventNode = (Node) event.getSource();
 		Stage currentStage = (Stage) eventNode.getScene().getWindow();
@@ -74,7 +82,10 @@ public class MainScreenController implements Initializable{
 		Scene nextScene = new Scene(loader.load());
 		
 		GraphScreenController controller = loader.getController();
-		controller.receiveData(myResources);
+		
+		Integer opSystemRestTime = Integer.parseInt(opSystemRestTimeField.getText());
+		
+		controller.receiveData(myResources, opSystemRestTime);
 		
 		
 		currentStage.setScene(nextScene);
@@ -108,6 +119,10 @@ public class MainScreenController implements Initializable{
 		
 	}
 	
+	public void handleChoiceBoxAction(ActionEvent event) {
+		System.out.println("EI");
+		this.resourceName.setText(resourcesChoiceBox.getValue());
+	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		/*create the tableview and it fields*/
@@ -127,6 +142,8 @@ public class MainScreenController implements Initializable{
 		
 		tableViewContainer.getChildren().add(resourcesTableView);
 		
-		
+		resourcesChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(Collections.list(ScreenConstants.defaultResourcesNames.keys())));
+		resourcesChoiceBoxContainer.getChildren().add(resourcesChoiceBox);
+		resourcesChoiceBox.setOnAction(this::handleChoiceBoxAction);
 	}
 }

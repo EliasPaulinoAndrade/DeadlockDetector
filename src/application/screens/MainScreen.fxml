@@ -56,6 +56,7 @@
                               <Font size="11.0" />
                            </font>
                         </Text>
+                        <AnchorPane fx:id="resourcesChoiceBoxContainer" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                      </children>
                      <VBox.margin>
                         <Insets />
@@ -72,6 +73,8 @@
             <GridPane alignment="CENTER" minHeight="50.0" minWidth="600.0" prefHeight="50.0" prefWidth="805.0">
                <children>
                   <Button minWidth="100.0" mnemonicParsing="false" onAction="#handleStartButtonAction" style="-fx-background-color: #54ACD2;" text="START" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="OpSystem Rest Time: " />
+                  <TextField fx:id="opSystemRestTimeField" GridPane.columnIndex="1" />
                </children>
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="217.0" minWidth="10.0" prefWidth="180.0" />

@@ -10,8 +10,6 @@ import deadlock_detector.MyOpSystem;
 import deadlock_detector.MyProcess;
 import deadlock_detector.MyProcessNode;
 import deadlock_detector.MyResource;
-import deadlock_detector.MyResourceNode;
-import graph.MyEdge;
 import graph.MyGraph;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,12 +41,12 @@ public class GraphScreenController implements Initializable {
 	private MyGraphDrawer drawer;
 
 	
-	public void receiveData(List<MyResource> resources) {
+	public void receiveData(List<MyResource> resources, Integer opSystemRestTime) {
 		/*when the controller receives the data from the older screen it creates the graph with the data*/
 		
 		drawer = new MyGraphDrawer();
 		
-		this.operationalSystem = new MyOpSystem(5.0, resources, drawer);
+		this.operationalSystem = new MyOpSystem(opSystemRestTime, resources, drawer);
 		this.graphDataSource = new MyDeadlockGraphDataSource(this.operationalSystem.getGraph(), this.graphContainer);
 		
 		
@@ -98,8 +96,8 @@ public class GraphScreenController implements Initializable {
 		
 		MyProcess process = new MyProcess(
 				processId.getText(), 
-				Double.parseDouble(processRestTime.getText()), 
-				Double.parseDouble(processActiveTime.getText()),
+				Integer.parseInt(processRestTime.getText()), 
+				Integer.parseInt(processActiveTime.getText()),
 				operationalSystem
 				);
 		MyProcessNode<MyProcess> processNode = new MyProcessNode<MyProcess>(process);
@@ -118,14 +116,7 @@ public class GraphScreenController implements Initializable {
 			Integer nextResourceId = Integer.parseInt(this.processId.getText()) + 1;
 			this.processId.setText(nextResourceId.toString());
 		}
-		
-//		MyProcessNode<MyProcess> processNode = (MyProcessNode<MyProcess>) graph.getNodeAt(1);
-//		MyResourceNode<MyResource> resourceNode = (MyResourceNode<MyResource>) graph.getNodeAt(0);
-//		MyEdge<?> edge = new MyEdge<>(resourceNode, null);
-//		
-//		graph.addEdgeToNode(edge, processNode);
-//		drawer.addEdgeToNodeAt(1, 0);
-//		
+	
 	}
 	
 	@FXML 
