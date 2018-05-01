@@ -143,8 +143,17 @@ public class MyGraphDrawer extends Region{
 		}
 	}
 	
+	public void removeEdgeFromNodeAt(Integer nodeIndex, Integer edgeIndex) {
+		/*remove a edge line from a node */
+		
+		MyGraphicsNode startGraphicsNode = this.nodes.get(nodeIndex);
+		
+		
+		this.getChildren().remove(startGraphicsNode.getStartingEdges().get(edgeIndex).getNode());
+		startGraphicsNode.getStartingEdges().remove(edgeIndex);
+	}
 	public void addEdgeToNodeAt(Integer nodeIndex, Integer edgeIndex){
-		/*add a edge line from a node for it destination node*/
+		/*add a edge line from a node to it destination node*/
 		
 		if(dataSource == null) {
 			return;

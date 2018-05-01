@@ -2,7 +2,6 @@ package deadlock_detector;
 
 import graph.MyEdge;
 import graph.MyNode;
-import graph.MyNodeValue;
 
 /*its a node subclass that restricts the destination edges's nodes, destination nodes can never be the same type that it
  * */
@@ -21,5 +20,4 @@ public class MyProcessNode<NodeElement extends MyProcess> extends MyNode<NodeEle
 				
 		return super.addEdge(edge);
 	}
-
 }

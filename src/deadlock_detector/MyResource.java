@@ -17,6 +17,7 @@ public class MyResource implements MyNodeValue{
 		this.semaphore = new Semaphore(1);
 	}	
 
+	
 	public void claim() throws InterruptedException {
 		semaphore.acquire();
 	}
