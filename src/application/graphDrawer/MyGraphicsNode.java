@@ -3,8 +3,7 @@ package application.graphDrawer;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import application.graphDrawer.eventHandlers.MyNodeEventHandler;
 import javafx.scene.Node;
 
 /*its a graphical representation of a node, it have a node and the node index in the graph.
@@ -14,20 +13,31 @@ import javafx.scene.Node;
 public class MyGraphicsNode {
 	private Node node;
 	private Integer index;
-	private Dictionary<Integer, MyGraphicsEdge> edges;
+	private Dictionary<Integer, MyGraphicsEdge> startingEdges;
+	private Dictionary<Integer, MyGraphicsEdge> endingEdges;
+	
 	
 	public MyGraphicsNode(Node node, Integer index) {
 		this.node = node;
 		this.index = index;
-		this.edges = new Hashtable<>();
+		this.startingEdges = new Hashtable<>();
+		this.endingEdges = new Hashtable<>();
 	}
 	
-	public Dictionary<Integer, MyGraphicsEdge> getEdges() {
-		return edges;
+	public Dictionary<Integer, MyGraphicsEdge> getEndingEdges() {
+		return endingEdges;
 	}
 
-	public void setEdges(Dictionary<Integer, MyGraphicsEdge> edges) {
-		this.edges = edges;
+	public void setEndingEdges(Dictionary<Integer, MyGraphicsEdge> endingEdges) {
+		this.endingEdges = endingEdges;
+	}
+
+	public Dictionary<Integer, MyGraphicsEdge> getStartingEdges() {
+		return startingEdges;
+	}
+
+	public void setStartingEdges(Dictionary<Integer, MyGraphicsEdge> edges) {
+		this.startingEdges = edges;
 	}
 
 	public Node getNode() {
@@ -47,17 +57,14 @@ public class MyGraphicsNode {
 	}
 
 	public void setOnNodeDragged(MyNodeEventHandler eventHandler) {
-		eventHandler.setGraphicsNode(this);
 		node.setOnMouseDragged(eventHandler);
 	}
 	
 	public void setOnNodeMouseDown(MyNodeEventHandler eventHandler) {
-		eventHandler.setGraphicsNode(this);
 		node.setOnMousePressed(eventHandler);
 	}
 	
 	public void setOnNodeMouseUp(MyNodeEventHandler eventHandler) {
-		eventHandler.setGraphicsNode(this);
 		node.setOnMouseReleased(eventHandler);	
 	}
 }

@@ -2,28 +2,12 @@ package application;
 	
 import java.io.IOException;
 
-import application.graphDrawer.MyGraphDrawer;
-import application.graphDrawer.MyGraphDrawerDataSource;
-import application.graphDrawer.MyGraphDrawerDelegate;
-import application.graphDrawer.MySize;
-import deadlock_detector.MyProcess;
-import deadlock_detector.MyProcessNode;
-import deadlock_detector.MyResource;
-import deadlock_detector.MyResourceNode;
-import graph.MyEdge;
-import graph.MyGraph;
-import graph.MyNode;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 
 public class Main extends Application{
 	

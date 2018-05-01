@@ -3,6 +3,7 @@ package application.graphDrawer;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 
 import javafx.scene.paint.Color;
@@ -22,6 +23,14 @@ public class MyGraphLine extends BorderPane {
 	private Double middleX;
 	private Double middleY;
 	
+	public MyGraphLine(Node node, Node destinationNode) {
+		this(
+			node.getLayoutX() + node.getBoundsInParent().getWidth()/2, 
+			node.getLayoutY() + node.getBoundsInParent().getWidth()/2,
+			destinationNode.getLayoutX() +  destinationNode.getBoundsInParent().getWidth()/2, 
+			destinationNode.getLayoutY() + destinationNode.getBoundsInParent().getHeight()/2
+			);
+	}
 	
 	public MyGraphLine(Double startX, Double startY, Double endX, Double endY) {
 		super();
@@ -99,6 +108,14 @@ public class MyGraphLine extends BorderPane {
 		this.setHeight(this.endY);
 		
 		redraw();
+	}
+	public void setLinePosition(Node node, Node destinationNode) {
+		this.setLinePosition(
+			node.getLayoutX() + node.getBoundsInParent().getWidth()/2, 
+			node.getLayoutY() + node.getBoundsInParent().getWidth()/2,
+			destinationNode.getLayoutX() +  destinationNode.getBoundsInParent().getWidth()/2, 
+			destinationNode.getLayoutY() + destinationNode.getBoundsInParent().getHeight()/2
+			);
 	}
 
 	public void setStroke(Color color) {

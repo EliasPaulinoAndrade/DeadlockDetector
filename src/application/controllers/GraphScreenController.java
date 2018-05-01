@@ -11,9 +11,7 @@ import deadlock_detector.MyProcess;
 import deadlock_detector.MyProcessNode;
 import deadlock_detector.MyResource;
 import deadlock_detector.MyResourceNode;
-import graph.MyEdge;
 import graph.MyGraph;
-import graph.MyNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,7 +21,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
 public class GraphScreenController implements Initializable {

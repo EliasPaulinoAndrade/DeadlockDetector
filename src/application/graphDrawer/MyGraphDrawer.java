@@ -5,18 +5,12 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Random;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
+import application.graphDrawer.eventHandlers.MyNodeClickDownHandler;
+import application.graphDrawer.eventHandlers.MyNodeClickUpHandler;
+import application.graphDrawer.eventHandlers.MyNodeDragHandler;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -143,9 +137,9 @@ public class MyGraphDrawer extends Region{
 		}
 		
 		if(dataSource.graphDrawerNodesCanMove(this)) {
-			graphicsNode.setOnNodeDragged(this.onNodeDragListener);
-			graphicsNode.setOnNodeMouseDown(this.onNodeMouseDown);
-			graphicsNode.setOnNodeMouseUp(this.onNodeMouseUp);
+			graphicsNode.setOnNodeMouseDown(new MyNodeClickDownHandler(graphicsNode, this));
+			graphicsNode.setOnNodeDragged(new MyNodeDragHandler(graphicsNode, this));
+			graphicsNode.setOnNodeMouseUp(new MyNodeClickUpHandler(graphicsNode, this));
 		}
 	}
 	
@@ -171,62 +165,87 @@ public class MyGraphDrawer extends Region{
 			edgeWidth = MyGraphDrawerDefaultValues.graphDrawerEdgeStrokeWidth;
 		}
 		
+		MyGraphicsNode startGraphicsNode = this.nodes.get(nodeIndex);
+		Node startNode = startGraphicsNode.getNode();
 		
-		MyGraphicsNode graphicsNode = this.nodes.get(nodeIndex);
-		Node node = graphicsNode.getNode();
-		Node destinationNode = this.nodes.get(destinationNodeIndex).getNode();
+		MyGraphicsNode endGraphicsNode = this.nodes.get(destinationNodeIndex);
+		Node destinationNode = endGraphicsNode.getNode();
 		
-		MyGraphLine currentLineEdge = new MyGraphLine(
-				node.getLayoutX() + node.getBoundsInParent().getWidth()/2, 
-				node.getLayoutY() + node.getBoundsInParent().getWidth()/2,
-				destinationNode.getLayoutX() +  destinationNode.getBoundsInParent().getWidth()/2, 
-				destinationNode.getLayoutY() + destinationNode.getBoundsInParent().getHeight()/2
-				);
+		MyGraphLine currentLineEdge = new MyGraphLine(startNode, destinationNode);
 		currentLineEdge.setStroke(edgeColor);
 		currentLineEdge.setStrokeWidth(edgeWidth);
 		
+		MyGraphicsEdge graphicsEdge = new MyGraphicsEdge(currentLineEdge, startGraphicsNode, endGraphicsNode);
+		
 		this.getChildren().add(currentLineEdge);
-		graphicsNode.getEdges().put(edgeIndex, new MyGraphicsEdge(currentLineEdge));
+		startGraphicsNode.getStartingEdges().put(edgeIndex, graphicsEdge);
+		endGraphicsNode.getEndingEdges().put(edgeIndex, graphicsEdge);
 		
 		currentLineEdge.toBack();
 	}
 	
-	public void updateEdgeOfNodeAt(Integer nodeIndex) {
+	public void updateEdgeStartingInNodeAt(Integer nodeIndex, Integer edgeIndex) {
+		/*it moves the line of a edge starting in a given node
+		 * */
+		
+		Integer destinationNodeIndex = dataSource.graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(this, edgeIndex, nodeIndex);
+		
+		if(destinationNodeIndex == null) {
+			return;
+		}
+		
+		Dictionary<Integer, MyGraphicsEdge> nodeEdges = this.nodes.get(nodeIndex).getStartingEdges();
+
+		Node node = this.nodes.get(nodeIndex).getNode();
+		Node destinationNode = this.nodes.get(destinationNodeIndex).getNode();
+		MyGraphLine edgeLine = nodeEdges.get(edgeIndex).getNode();
+	
+		edgeLine.setLinePosition(node, destinationNode);	
+	}
+	
+	public void updateEdgeEndingInNodeAt(Integer destinationNodeIndex, Integer edgeIndex) {
+		/*it moves the line of the edge ending in a given node*/
+		
+		/*Integer destinationNodeIndex = dataSource.graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(this, edgeIndex, nodeIndex);
+		
+		if(destinationNodeIndex == null) {
+			return;
+		}*/
+		
+		Dictionary<Integer, MyGraphicsEdge> nodeEdges = this.nodes.get(destinationNodeIndex).getEndingEdges();
+		MyGraphicsEdge edge = nodeEdges.get(edgeIndex);
+		MyGraphLine edgeLine = edge.getNode();
+		
+		Node node = edge.getStartGraphicsNode().getNode();
+		Node destinationNode = this.nodes.get(destinationNodeIndex).getNode();
+	
+		edgeLine.setLinePosition(node, destinationNode);	
+	}
+	
+	public void updateEdgesOfNodeAt(Integer nodeIndex) {
 		/*it updates a edge line position when the node position was changed*/
 		
 		if(dataSource == null) {
 			return;
 		}
 		
-		Dictionary<Integer, MyGraphicsEdge> nodeEdges = this.nodes.get(nodeIndex).getEdges();
+		Dictionary<Integer, MyGraphicsEdge> startingNodeEdges = this.nodes.get(nodeIndex).getStartingEdges();
+		Enumeration<Integer> startingEdgesIndices = startingNodeEdges.keys();
 		
-		Enumeration<Integer> edgesIndices = nodeEdges.keys();
-		Integer currentEdgeIndex;
-		Integer destinationNodeIndexForCurrentEdge;
+		Dictionary<Integer, MyGraphicsEdge> endingNodeEdges = this.nodes.get(nodeIndex).getEndingEdges();
+		Enumeration<Integer> endingEdgesIndices = endingNodeEdges.keys();
 		
-		Node node = this.nodes.get(nodeIndex).getNode();
-		Node destinationNode;
-		MyGraphLine currentEdgeLine;
-		
-		while(edgesIndices.hasMoreElements()) {
-			currentEdgeIndex = edgesIndices.nextElement();
-			destinationNodeIndexForCurrentEdge = dataSource.graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(this, currentEdgeIndex, nodeIndex);
-			
-			if(destinationNodeIndexForCurrentEdge == null) {
-				return;
-			}
-			
-			destinationNode = this.nodes.get(destinationNodeIndexForCurrentEdge).getNode();
-			currentEdgeLine = nodeEdges.get(currentEdgeIndex).getNode();
-			
-			currentEdgeLine.setLinePosition(
-					node.getLayoutX() + node.getBoundsInParent().getWidth()/2, 
-					node.getLayoutY() + node.getBoundsInParent().getWidth()/2,
-					destinationNode.getLayoutX() +  destinationNode.getBoundsInParent().getWidth()/2, 
-					destinationNode.getLayoutY() + destinationNode.getBoundsInParent().getHeight()/2
-					);
-			
+		Integer currentEdgeIndex;	
+		while(startingEdgesIndices.hasMoreElements()) {
+			currentEdgeIndex = startingEdgesIndices.nextElement();
+			this.updateEdgeStartingInNodeAt(nodeIndex, currentEdgeIndex);
 		}
+		
+		while(endingEdgesIndices.hasMoreElements()) {
+			currentEdgeIndex = endingEdgesIndices.nextElement();
+			this.updateEdgeEndingInNodeAt(nodeIndex, currentEdgeIndex);
+		}
+		
 		
 	}
 	private void drawEdges() {
@@ -306,78 +325,4 @@ public class MyGraphDrawer extends Region{
 		targetNode.setLayoutY(y);		
 	}
 
-	private MyNodeEventHandler onNodeDragListener = new MyNodeEventHandler() {
-		/*when the node is dragged, it follows the mouse position(but only if the mouse is in the bounds)*/
-		
-		@Override
-		public void handle(Event event) {
-			if(dataSource == null) {
-				return;
-			}
-			
-			MySize containerSize = dataSource.graphDrawerNodeMaxSize(MyGraphDrawer.this);
-			
-			if(containerSize == null) {
-				containerSize = MyGraphDrawerDefaultValues.graphDrawerNodeMaxSize;
-			}
-			
-			MouseEvent mouseEvent = (MouseEvent) event;
-			Node containerNode = (Node) event.getSource();
-			
-			Double hTranslation = containerNode.getLayoutX() + mouseEvent.getX() - containerSize.getWidth()/2;
-			Double vTranslation = containerNode.getLayoutY() + mouseEvent.getY() - containerSize.getHeight()/2;
-			
-			Boolean changed = false;
-			if(hTranslation > 0 && hTranslation + containerSize.getWidth() < MyGraphDrawer.this.getWidth()) {
-				containerNode.setLayoutX(hTranslation);
-				changed = true;
-			}
-			if(vTranslation > 0 && vTranslation + containerSize.getHeight() < MyGraphDrawer.this.getHeight()) {
-				containerNode.setLayoutY(vTranslation);
-				changed = true;
-			}
-			if(changed) {
-				MyGraphDrawer.this.updateEdgeOfNodeAt(getGraphicsNode().getIndex());
-			}
-		}
-	
-	};
-
-	private MyNodeEventHandler onNodeMouseDown = new MyNodeEventHandler() {
-		/*when the mouse enters on the node, a node border is set*/
-		
-		@Override
-		public void handle(Event event) {
-		
-			if(dataSource == null) {
-				return;
-			}
-			
-			Color tintColor = dataSource.graphDrawerTintColor(MyGraphDrawer.this);
-			
-			if(tintColor == null) {
-				tintColor = MyGraphDrawerDefaultValues.graphDrawerTintColor;
-			}
-			
-			Pane containerNode = (Pane) event.getSource();
-			BorderStroke stroke = new BorderStroke(
-					dataSource.graphDrawerTintColor(MyGraphDrawer.this), 
-					BorderStrokeStyle.SOLID, 
-					new CornerRadii(containerNode.getWidth()/2), 
-					new BorderWidths(2), 
-					Insets.EMPTY);
-			Border border = new Border(stroke);
-			containerNode.setBorder(border);
-		}
-	};
-	
-	private MyNodeEventHandler onNodeMouseUp = new MyNodeEventHandler() {
-		/*when the mouse leaves the node, the node border is removed
-		 * */
-		@Override
-		public void handle(Event event) {
-			Pane containerNode = (Pane) event.getSource();
-			containerNode.setBorder(null);	
-		}
-	};
 }
