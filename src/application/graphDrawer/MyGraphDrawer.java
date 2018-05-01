@@ -98,6 +98,7 @@ public class MyGraphDrawer extends Region{
 		
 		Node node = dataSource.graphDrawerNodeViewForNodeAtIndex(this, index);
 		MySize containerSize = dataSource.graphDrawerNodeMaxSize(this);
+		MySize rootSize = dataSource.graphDrawerGraphSize(this);
 		
 		if(node == null) {
 			return ;
@@ -106,7 +107,14 @@ public class MyGraphDrawer extends Region{
 			containerSize = MyGraphDrawerDefaultValues.graphDrawerNodeMaxSize;
 		}
 		
-		MySize rootSize = new MySize(this.getWidth(), this.getHeight());
+		if(this.getWidth()!=0 && this.getHeight()!=0) {
+			rootSize = new MySize(this.getWidth(), this.getHeight());
+		}
+		else if(rootSize == null) {
+			rootSize = MyGraphDrawerDefaultValues.graphDrawerGraphSize;
+		}
+		
+		
 		Pane containerNode = new StackPane();
 		MyGraphicsNode graphicsNode = new MyGraphicsNode(containerNode, index);
 

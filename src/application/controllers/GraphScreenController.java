@@ -123,12 +123,12 @@ public class GraphScreenController implements Initializable {
 			this.processId.setText(nextResourceId.toString());
 		}
 		
-		MyProcessNode<MyProcess> processNode = (MyProcessNode<MyProcess>) graph.getNodeAt(1);
-		MyResourceNode<MyResource> resourceNode = (MyResourceNode<MyResource>) graph.getNodeAt(0);
-		MyEdge<?> edge = new MyEdge<>(resourceNode, null);
-		
-		graph.addEdgeToNode(edge, processNode);
-		drawer.addEdgeToNodeAt(1, 0);
+//		MyProcessNode<MyProcess> processNode = (MyProcessNode<MyProcess>) graph.getNodeAt(1);
+//		MyResourceNode<MyResource> resourceNode = (MyResourceNode<MyResource>) graph.getNodeAt(0);
+//		MyEdge<?> edge = new MyEdge<>(resourceNode, null);
+//		
+//		graph.addEdgeToNode(edge, processNode);
+//		drawer.addEdgeToNodeAt(1, 0);
 		
 	}
 	
