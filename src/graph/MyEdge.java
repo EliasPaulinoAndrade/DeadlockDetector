@@ -1,6 +1,6 @@
 package graph;
 
-/*each edge have the a destination node and a path information, like: 'distance between houses', 'time' and etc*/
+/*each edge has the a destination node and a path information, like: 'distance between houses', 'time' and etc*/
 public class MyEdge<PathElement> {
 	private MyNode<?> destinationVertex;
 	private PathElement pathInformation;

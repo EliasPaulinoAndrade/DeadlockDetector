@@ -44,6 +44,9 @@ public class MainScreenController implements Initializable{
 
 	@FXML 
 	private void handleSaveButtonAction(ActionEvent event) {
+		/*when the save button is cliked, it creates a new resource and add it to the arraylist. If autoincrement is on:
+		 * it increments the textfield id number 
+		 * */
 		MyResource resource  = new MyResource(
 				resourceName.getText(), 
 				resourceId.getText()
@@ -59,6 +62,9 @@ public class MainScreenController implements Initializable{
 	
 	@FXML 
 	private void handleStartButtonAction(ActionEvent event) throws IOException {
+		/*the button start opens a new window by changing the scene with the new pane. It send the resources to the new controller
+		 * using the method receiveData()*/
+		
 		FXMLLoader loader = new FXMLLoader();
 	    loader.setLocation(Main.class.getResource("GraphScreen.fxml"));
 	    
@@ -79,6 +85,9 @@ public class MainScreenController implements Initializable{
 	
 	@FXML 
 	private void handleCheckBoxAction(ActionEvent event) {
+		/*if the autoincrement is set to on and if there is at least one resource saved: it gets the last resource id and use to calculate 
+		 * the new resource id. if there is no resource:  it begins on 0*/
+		
 		if(autoIncrementCheck.isSelected()) {
 			this.resourceId.setEditable(false);
 			this.resourceId.setDisable(true);
@@ -101,6 +110,8 @@ public class MainScreenController implements Initializable{
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		/*create the tableview and it fields*/
+		
 		column = new TableColumn<>("ID");
 		column.setCellValueFactory(new PropertyValueFactory<>("resourceIdentifier"));
 		column.setMaxWidth(400);

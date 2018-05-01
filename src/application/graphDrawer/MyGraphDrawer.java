@@ -61,11 +61,22 @@ public class MyGraphDrawer extends Region{
 	}
 
 	public void drawGraph() {
+		/*draw all the nodes and edges*/
+		
 		if(dataSource == null) {
 			return ;
 		}
+		
 		Color rootColor = dataSource.graphDrawerGraphColor(this);
 		MySize rootSize = dataSource.graphDrawerGraphSize(this);
+		
+		if(rootColor == null) {
+			rootColor = MyGraphDrawerDefaultValues.graphDrawerGraphColor;
+		}
+		
+		if(rootSize == null) {
+			rootSize = MyGraphDrawerDefaultValues.graphDrawerGraphSize;
+		}
 		
 		Background rootBackground = new Background(new BackgroundFill(rootColor, null, null));
 	
@@ -80,12 +91,23 @@ public class MyGraphDrawer extends Region{
 	public void addNodeAt(Integer index) {
 		/*draw a node at a index
 		 * */
+		
+		if(dataSource == null) {
+			return;
+		}
+		
 		Node node = dataSource.graphDrawerNodeViewForNodeAtIndex(this, index);
 		MySize containerSize = dataSource.graphDrawerNodeMaxSize(this);
-		MySize rootSize = new MySize(this.getWidth(), this.getHeight());
-
-		Pane containerNode = new StackPane();
 		
+		if(node == null) {
+			return ;
+		}
+		if(containerSize == null) {
+			containerSize = MyGraphDrawerDefaultValues.graphDrawerNodeMaxSize;
+		}
+		
+		MySize rootSize = new MySize(this.getWidth(), this.getHeight());
+		Pane containerNode = new StackPane();
 		MyGraphicsNode graphicsNode = new MyGraphicsNode(containerNode, index);
 
 		containerNode.setMinHeight(containerSize.getHeight());
@@ -97,6 +119,21 @@ public class MyGraphDrawer extends Region{
 		this.nodes.put(index, graphicsNode);
 		this.getChildren().add(containerNode);	
 		
+		this.addNodeListeners(graphicsNode);
+	}
+	
+	private void addNodeListeners(MyGraphicsNode graphicsNode) {
+		/*check if the nodes can move, and set they listeners*/
+		
+		if(dataSource == null) {
+			return ;
+		}
+		
+		Boolean nodesCanMove = dataSource.graphDrawerNodesCanMove(this);
+		if(nodesCanMove == null) {
+			nodesCanMove = MyGraphDrawerDefaultValues.graphDrawerNodesCanMove;
+		}
+		
 		if(dataSource.graphDrawerNodesCanMove(this)) {
 			graphicsNode.setOnNodeDragged(this.onNodeDragListener);
 			graphicsNode.setOnNodeMouseDown(this.onNodeMouseDown);
@@ -107,9 +144,28 @@ public class MyGraphDrawer extends Region{
 	public void addEdgeToNodeAt(Integer nodeIndex, Integer edgeIndex){
 		/*add a edge line from a node for it destination node*/
 		
+		if(dataSource == null) {
+			return;
+		}
+		
+		Integer destinationNodeIndex = dataSource.graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(this, edgeIndex, nodeIndex);
+		if(destinationNodeIndex == null) {
+			return;
+		}
+		
+		Color edgeColor = dataSource.graphDrawerEdgesColor(this);
+		Double edgeWidth = dataSource.graphDrawerEdgeStrokeWidth(this);
+		
+		if(edgeColor == null) {
+			edgeColor = MyGraphDrawerDefaultValues.graphDrawerEdgesColor;
+		}
+		if(edgeWidth == null) {
+			edgeWidth = MyGraphDrawerDefaultValues.graphDrawerEdgeStrokeWidth;
+		}
+		
+		
 		MyGraphicsNode graphicsNode = this.nodes.get(nodeIndex);
 		Node node = graphicsNode.getNode();
-		Integer destinationNodeIndex = dataSource.graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(this, edgeIndex, nodeIndex);
 		Node destinationNode = this.nodes.get(destinationNodeIndex).getNode();
 		
 		MyGraphLine currentLineEdge = new MyGraphLine(
@@ -118,8 +174,8 @@ public class MyGraphDrawer extends Region{
 				destinationNode.getLayoutX() +  destinationNode.getBoundsInParent().getWidth()/2, 
 				destinationNode.getLayoutY() + destinationNode.getBoundsInParent().getHeight()/2
 				);
-		currentLineEdge.setStroke(dataSource.graphDrawerEdgesColor(this));
-		currentLineEdge.setStrokeWidth(dataSource.graphDrawerEdgeStrokeWidth(this));
+		currentLineEdge.setStroke(edgeColor);
+		currentLineEdge.setStrokeWidth(edgeWidth);
 		
 		this.getChildren().add(currentLineEdge);
 		graphicsNode.getEdges().put(edgeIndex, new MyGraphicsEdge(currentLineEdge));
@@ -129,6 +185,10 @@ public class MyGraphDrawer extends Region{
 	
 	public void updateEdgeOfNodeAt(Integer nodeIndex) {
 		/*it updates a edge line position when the node position was changed*/
+		
+		if(dataSource == null) {
+			return;
+		}
 		
 		Dictionary<Integer, MyGraphicsEdge> nodeEdges = this.nodes.get(nodeIndex).getEdges();
 		
@@ -143,6 +203,10 @@ public class MyGraphDrawer extends Region{
 		while(edgesIndices.hasMoreElements()) {
 			currentEdgeIndex = edgesIndices.nextElement();
 			destinationNodeIndexForCurrentEdge = dataSource.graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(this, currentEdgeIndex, nodeIndex);
+			
+			if(destinationNodeIndexForCurrentEdge == null) {
+				return;
+			}
 			
 			destinationNode = this.nodes.get(destinationNodeIndexForCurrentEdge).getNode();
 			currentEdgeLine = nodeEdges.get(currentEdgeIndex).getNode();
@@ -174,6 +238,10 @@ public class MyGraphDrawer extends Region{
 			currentNodeIndex = nodeIndices.nextElement();
 			currentNodeNumberOfEdges = dataSource.graphDrawerNumberOfEdgesStartingFromNodeAtIndex(this, currentNodeIndex);
 			
+			if(currentNodeNumberOfEdges == null) {
+				return;
+			}
+			
 			for(currentEdgeIndexFromNode = 0; currentEdgeIndexFromNode < currentNodeNumberOfEdges; currentEdgeIndexFromNode++) {
 				
 				this.addEdgeToNodeAt(currentNodeIndex, currentEdgeIndexFromNode);
@@ -193,6 +261,10 @@ public class MyGraphDrawer extends Region{
 		
 		Integer numberOfNodes = dataSource.graphDrawerNumberOfNodes(this);
 		
+		if(numberOfNodes == null) {
+			return;
+		}
+		
 		for(int nodeIndex = 0; nodeIndex < numberOfNodes; nodeIndex++) {
 			addNodeAt(nodeIndex);
 		}
@@ -204,10 +276,20 @@ public class MyGraphDrawer extends Region{
 		 * until find the good one
 		 * */
 		
+		if(dataSource == null) {
+			return;
+		}
+		
 		Random random = new Random();
+		
+		MySize nodeMaxSize = dataSource.graphDrawerNodeMaxSize(this);
+		
+		if(nodeMaxSize == null) {
+			nodeMaxSize = MyGraphDrawerDefaultValues.graphDrawerNodeMaxSize;
+		}
 
-		int nodeMaxWidth = (int) Math.ceil(dataSource.graphDrawerNodeMaxSize(this).getWidth().doubleValue());
-		int nodeMaxHeight = (int) Math.ceil(dataSource.graphDrawerNodeMaxSize(this).getHeight().doubleValue());
+		int nodeMaxWidth = (int) Math.ceil(nodeMaxSize.getWidth().doubleValue());
+		int nodeMaxHeight = (int) Math.ceil(nodeMaxSize.getHeight().doubleValue());
 		
 		int x = random.nextInt(containerSize.getWidth().intValue() - nodeMaxWidth);
 		int y = random.nextInt(containerSize.getHeight().intValue() - nodeMaxHeight);
@@ -217,12 +299,22 @@ public class MyGraphDrawer extends Region{
 	}
 
 	private MyNodeEventHandler onNodeDragListener = new MyNodeEventHandler() {
+		/*when the node is dragged, it follows the mouse position(but only if the mouse is in the bounds)*/
 		
 		@Override
 		public void handle(Event event) {
+			if(dataSource == null) {
+				return;
+			}
+			
+			MySize containerSize = dataSource.graphDrawerNodeMaxSize(MyGraphDrawer.this);
+			
+			if(containerSize == null) {
+				containerSize = MyGraphDrawerDefaultValues.graphDrawerNodeMaxSize;
+			}
+			
 			MouseEvent mouseEvent = (MouseEvent) event;
 			Node containerNode = (Node) event.getSource();
-			MySize containerSize = dataSource.graphDrawerNodeMaxSize(MyGraphDrawer.this);
 			
 			Double hTranslation = containerNode.getLayoutX() + mouseEvent.getX() - containerSize.getWidth()/2;
 			Double vTranslation = containerNode.getLayoutY() + mouseEvent.getY() - containerSize.getHeight()/2;
@@ -244,12 +336,24 @@ public class MyGraphDrawer extends Region{
 	};
 
 	private MyNodeEventHandler onNodeMouseDown = new MyNodeEventHandler() {
-
+		/*when the mouse enters on the node, a node border is set*/
+		
 		@Override
 		public void handle(Event event) {
+		
+			if(dataSource == null) {
+				return;
+			}
+			
+			Color tintColor = dataSource.graphDrawerTintColor(MyGraphDrawer.this);
+			
+			if(tintColor == null) {
+				tintColor = MyGraphDrawerDefaultValues.graphDrawerTintColor;
+			}
+			
 			Pane containerNode = (Pane) event.getSource();
 			BorderStroke stroke = new BorderStroke(
-					Color.RED, 
+					dataSource.graphDrawerTintColor(MyGraphDrawer.this), 
 					BorderStrokeStyle.SOLID, 
 					new CornerRadii(containerNode.getWidth()/2), 
 					new BorderWidths(2), 
@@ -260,7 +364,8 @@ public class MyGraphDrawer extends Region{
 	};
 	
 	private MyNodeEventHandler onNodeMouseUp = new MyNodeEventHandler() {
-
+		/*when the mouse leaves the node, the node border is removed
+		 * */
 		@Override
 		public void handle(Event event) {
 			Pane containerNode = (Pane) event.getSource();

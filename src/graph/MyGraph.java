@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-/*graph's class, it have a linked list for do the 'adjacency list' implementation */
+/*graph's class, it has a linked list for do the 'adjacency list' implementation */
 public class MyGraph{
 	private List<MyNode<?>> vertices;
 

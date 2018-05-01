@@ -40,16 +40,18 @@ public class GraphScreenController implements Initializable {
 	private TableColumn<MyProcess, String> column3;
 	
 	private List<MyResource> myResources;
-	private List<MyProcess> myProcess;
+	private List<MyProcess> myProcesses;
 	private MyGraph graph;
 	private MyDeadlockGraphDataSource graphDataSource;
 	private MyGraphDrawer drawer;
 	
 	public GraphScreenController() {
-		this.myProcess = new ArrayList<>();
+		this.myProcesses = new ArrayList<>();
 	}
 
 	public void receiveData(List<MyResource> myResources) {
+		/*when the controller receives the data from the older screen it creates the graph with the data*/
+		
 		this.myResources = myResources;	
 		this.graph = new MyGraph();
 		this.graphDataSource = new MyDeadlockGraphDataSource(this.graph, this.graphContainer);
@@ -78,6 +80,8 @@ public class GraphScreenController implements Initializable {
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		/*it creates the tableview*/
+		
 		column = new TableColumn<>("ID");
 		column.setCellValueFactory(new PropertyValueFactory<>("processIdentifier"));
 		column.setMaxWidth(900);
@@ -101,13 +105,15 @@ public class GraphScreenController implements Initializable {
 	
 	@FXML 
 	private void handleSaveButtonAction(ActionEvent event) {
+		/*when the save button is clicked a new process is created and added to the graph */
+		
 		MyProcess process = new MyProcess(
 				processId.getText(), 
 				Double.parseDouble(processRestTime.getText()), 
 				Double.parseDouble(processActiveTime.getText())
 				);
 		
-		myProcess.add(process);
+		myProcesses.add(process);
 		processTableView.getItems().add(process);	
 		graph.addNode(new MyProcessNode<MyProcess>(process));
 		drawer.addNodeAt(graph.numberOfNodes() - 1);
@@ -128,12 +134,14 @@ public class GraphScreenController implements Initializable {
 	
 	@FXML 
 	private void handleCheckBoxAction(ActionEvent event) {	
+		/*same autoincrementlogic*/
+		
 		if(autoIdProcess.isSelected()) {
 			this.processId.setEditable(false);
 			this.processId.setDisable(true);
-			Integer processSize = this.myProcess.size();
+			Integer processSize = this.myProcesses.size();
 			if(processSize > 0) {
-				MyProcess lastProcess = this.myProcess.get(processSize - 1);
+				MyProcess lastProcess = this.myProcesses.get(processSize - 1);
 				Integer nextResourceId = Integer.parseInt(lastProcess.getProcessIdentifier()) + 1;
 				this.processId.setText(nextResourceId.toString());
 			}

@@ -16,4 +16,5 @@ public interface MyGraphDrawerDataSource {
 	Integer graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(MyGraphDrawer graphDrawer, Integer edgeIndex, Integer nodeIndex);
 	Double graphDrawerEdgeStrokeWidth(MyGraphDrawer graphDrawer);
 	Boolean graphDrawerNodesCanMove(MyGraphDrawer graphDrawer);
+	Color graphDrawerTintColor(MyGraphDrawer graphDrawer);
 }

@@ -3,7 +3,7 @@ package graph;
 import java.util.LinkedList;
 import java.util.List;
 
-/*each node have a linked list for show it paths to other nodes*/
+/*each node has a linked list for show it paths to other nodes*/
 public class MyNode<NodeElement extends MyNodeValue>{
 	private Integer id;
 	private NodeElement value;

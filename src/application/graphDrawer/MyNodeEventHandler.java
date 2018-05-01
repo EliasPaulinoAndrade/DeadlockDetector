@@ -3,6 +3,9 @@ package application.graphDrawer;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
+
+/*its a EventHandle extensions which can have a graphicsNode reference*/
+
 public class MyNodeEventHandler implements EventHandler<Event>{
 	private MyGraphicsNode graphicsNode;
 	

@@ -2,6 +2,7 @@ package application.graphDrawer;
 
 import javafx.scene.Node;
 
+/*its is a graphical representation of the edge*/
 public class MyGraphicsEdge {
 	MyGraphLine node;
 

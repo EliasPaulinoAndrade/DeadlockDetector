@@ -7,6 +7,10 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 
+/*its a graphical representation of a node, it have a node and the node index in the graph.
+ * this class encapsulates the nodes listeners, and set itself to the eventhandler, in this way, 
+ * the handle() method has access to the node and it index 
+ * */
 public class MyGraphicsNode {
 	private Node node;
 	private Integer index;

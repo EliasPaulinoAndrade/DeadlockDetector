@@ -17,6 +17,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 /*data source implementation for deadlock threads problem*/
+
 public class MyDeadlockGraphDataSource implements MyGraphDrawerDataSource{
 	private MyGraph graph;
 	private Pane graphContainer;
@@ -87,7 +88,7 @@ public class MyDeadlockGraphDataSource implements MyGraphDrawerDataSource{
 	@Override
 	public Color graphDrawerEdgesColor(MyGraphDrawer graphDrawer) {
 		
-		return Color.RED;
+		return Color.BLUE;
 	}
 
 	@Override
@@ -100,6 +101,12 @@ public class MyDeadlockGraphDataSource implements MyGraphDrawerDataSource{
 	public Boolean graphDrawerNodesCanMove(MyGraphDrawer graphDrawer) {
 		
 		return true;
+	}
+
+	@Override
+	public Color graphDrawerTintColor(MyGraphDrawer graphDrawer) {
+		
+		return Color.CHARTREUSE;
 	}
 	
 
