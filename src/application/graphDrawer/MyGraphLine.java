@@ -37,21 +37,9 @@ public class MyGraphLine extends BorderPane {
 		this.setWidth(this.endX);
 		this.setHeight(this.endY);
 		
-		this.mainLine = new Line(0, 0, this.endX, this.endY);
-		
-		Double angle = Math.atan2((this.endY - this.startY), (this.endX - this.startX)) - Math.PI / 2.0;
-		Double sin = Math.sin(angle);
-		Double cos = Math.cos(angle);
-       
-        
-		Double x1 = (- 1.0 / 2.0 * cos + Math.sqrt(3) / 2 * sin) * 10 + this.middleX;
-		Double y1 = (- 1.0 / 2.0 * sin - Math.sqrt(3) / 2 * cos) * 10 + this.middleY;
-		Double x2 = (1.0 / 2.0 * cos + Math.sqrt(3) / 2 * sin) * 10 + this.middleX;
-		Double y2 = (1.0 / 2.0 * sin - Math.sqrt(3) / 2 * cos) * 10 + this.middleY;
-        
-		
-        this.arrowLine1 = new Line(this.middleX,this.middleY,x1,y1);
-        this.arrowLine2 = new Line(this.middleX,this.middleY,x2,y2);
+		this.arrowLine1 = new Line();
+        this.arrowLine2 = new Line();
+		this.mainLine = new Line();		
         
         this.arrowLine1.setOnMouseEntered(this.enteredChildren);
         this.arrowLine2.setOnMouseEntered(this.enteredChildren);
@@ -60,10 +48,56 @@ public class MyGraphLine extends BorderPane {
         this.arrowLine1.setOnMouseExited(this.exitedChildren);
         this.arrowLine2.setOnMouseExited(this.exitedChildren);
         this.mainLine.setOnMouseExited(this.exitedChildren);
-        
+          
 		this.getChildren().add(this.mainLine);
 		this.getChildren().add(this.arrowLine1);
 		this.getChildren().add(this.arrowLine2);
+		
+		this.redraw();
+	}
+	
+	private void redraw() {
+		this.mainLine.setStartX(0);
+		this.mainLine.setStartY(0);
+		this.mainLine.setEndX(this.endX);
+		this.mainLine.setEndY(this.endY);
+		
+		Double angle = Math.atan2((this.endY - this.startY), (this.endX - this.startX)) - Math.PI / 2.0;
+		Double sin = Math.sin(angle);
+		Double cos = Math.cos(angle);
+       
+        
+		Double x1 = (-1.0 / 2.0 * cos + Math.sqrt(3) / 2 * sin) * 10 + this.middleX;
+		Double y1 = (-1.0 / 2.0 * sin - Math.sqrt(3) / 2 * cos) * 10 + this.middleY;
+		Double x2 = (1.0 / 2.0 * cos + Math.sqrt(3) / 2 * sin) * 10 + this.middleX;
+		Double y2 = (1.0 / 2.0 * sin - Math.sqrt(3) / 2 * cos) * 10 + this.middleY;
+        
+		
+		this.arrowLine1.setStartX(this.middleX);
+		this.arrowLine1.setStartY(this.middleY);
+		this.arrowLine1.setEndX(x1);
+		this.arrowLine1.setEndY(y1);
+		
+		this.arrowLine2.setStartX(this.middleX);
+		this.arrowLine2.setStartY(this.middleY);
+		this.arrowLine2.setEndX(x2);
+		this.arrowLine2.setEndY(y2);
+	}
+	
+	public void setLinePosition(Double startX, Double startY, Double endX, Double endY) {
+		this.startX = 0.0;
+		this.startY = 0.0;
+		this.endX = endX - startX;
+		this.endY = endY - startY;
+		this.middleX = (this.startX + this.endX)/2;
+		this.middleY = (this.startY + this.endY)/2;
+		
+		this.setTranslateX(startX);
+		this.setTranslateY(startY);
+		this.setWidth(this.endX);
+		this.setHeight(this.endY);
+		
+		redraw();
 	}
 
 	public void setStroke(Color color) {

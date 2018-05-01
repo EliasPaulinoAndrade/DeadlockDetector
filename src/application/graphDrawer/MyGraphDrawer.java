@@ -85,6 +85,8 @@ public class MyGraphDrawer extends Region{
 		MySize rootSize = new MySize(this.getWidth(), this.getHeight());
 
 		Pane containerNode = new StackPane();
+		
+		MyGraphicsNode graphicsNode = new MyGraphicsNode(containerNode, index);
 
 		containerNode.setMinHeight(containerSize.getHeight());
 		containerNode.setMinWidth(containerSize.getWidth());
@@ -92,13 +94,13 @@ public class MyGraphDrawer extends Region{
 		containerNode.getChildren().add(node);
 		setNodeInRandomUnusedPoint(rootSize, containerNode);
 		
-		this.nodes.put(index, new MyGraphicsNode(containerNode));
+		this.nodes.put(index, graphicsNode);
 		this.getChildren().add(containerNode);	
 		
 		if(dataSource.graphDrawerNodesCanMove(this)) {
-			containerNode.setOnMouseDragged(this.onNodesDragListener);
-			containerNode.setOnMousePressed(this.onNodeMouseDown);
-			containerNode.setOnMouseReleased(this.onNodeMouseUp);
+			graphicsNode.setOnNodeDragged(this.onNodeDragListener);
+			graphicsNode.setOnNodeMouseDown(this.onNodeMouseDown);
+			graphicsNode.setOnNodeMouseUp(this.onNodeMouseUp);
 		}
 	}
 	
@@ -120,11 +122,41 @@ public class MyGraphDrawer extends Region{
 		currentLineEdge.setStrokeWidth(dataSource.graphDrawerEdgeStrokeWidth(this));
 		
 		this.getChildren().add(currentLineEdge);
-		graphicsNode.addToEdges(edgeIndex, new MyGraphicsEdge(currentLineEdge));
+		graphicsNode.getEdges().put(edgeIndex, new MyGraphicsEdge(currentLineEdge));
 		
 		currentLineEdge.toBack();
 	}
 	
+	public void updateEdgeOfNodeAt(Integer nodeIndex) {
+		/*it updates a edge line position when the node position was changed*/
+		
+		Dictionary<Integer, MyGraphicsEdge> nodeEdges = this.nodes.get(nodeIndex).getEdges();
+		
+		Enumeration<Integer> edgesIndices = nodeEdges.keys();
+		Integer currentEdgeIndex;
+		Integer destinationNodeIndexForCurrentEdge;
+		
+		Node node = this.nodes.get(nodeIndex).getNode();
+		Node destinationNode;
+		MyGraphLine currentEdgeLine;
+		
+		while(edgesIndices.hasMoreElements()) {
+			currentEdgeIndex = edgesIndices.nextElement();
+			destinationNodeIndexForCurrentEdge = dataSource.graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(this, currentEdgeIndex, nodeIndex);
+			
+			destinationNode = this.nodes.get(destinationNodeIndexForCurrentEdge).getNode();
+			currentEdgeLine = nodeEdges.get(currentEdgeIndex).getNode();
+			
+			currentEdgeLine.setLinePosition(
+					node.getLayoutX() + node.getBoundsInParent().getWidth()/2, 
+					node.getLayoutY() + node.getBoundsInParent().getWidth()/2,
+					destinationNode.getLayoutX() +  destinationNode.getBoundsInParent().getWidth()/2, 
+					destinationNode.getLayoutY() + destinationNode.getBoundsInParent().getHeight()/2
+					);
+			
+		}
+		
+	}
 	private void drawEdges() {
 		/*
 		 * iterate over all the nodes while drawing it edges
@@ -184,28 +216,34 @@ public class MyGraphDrawer extends Region{
 		targetNode.setLayoutY(y);		
 	}
 
-	private EventHandler<Event> onNodesDragListener = new EventHandler<Event>() {
-
+	private MyNodeEventHandler onNodeDragListener = new MyNodeEventHandler() {
+		
 		@Override
 		public void handle(Event event) {
 			MouseEvent mouseEvent = (MouseEvent) event;
 			Node containerNode = (Node) event.getSource();
 			MySize containerSize = dataSource.graphDrawerNodeMaxSize(MyGraphDrawer.this);
-		
+			
 			Double hTranslation = containerNode.getLayoutX() + mouseEvent.getX() - containerSize.getWidth()/2;
 			Double vTranslation = containerNode.getLayoutY() + mouseEvent.getY() - containerSize.getHeight()/2;
 			
+			Boolean changed = false;
 			if(hTranslation > 0 && hTranslation + containerSize.getWidth() < MyGraphDrawer.this.getWidth()) {
 				containerNode.setLayoutX(hTranslation);
+				changed = true;
 			}
 			if(vTranslation > 0 && vTranslation + containerSize.getHeight() < MyGraphDrawer.this.getHeight()) {
 				containerNode.setLayoutY(vTranslation);
+				changed = true;
+			}
+			if(changed) {
+				MyGraphDrawer.this.updateEdgeOfNodeAt(getGraphicsNode().getIndex());
 			}
 		}
 	
 	};
 
-	private EventHandler<Event> onNodeMouseDown = new EventHandler<Event>() {
+	private MyNodeEventHandler onNodeMouseDown = new MyNodeEventHandler() {
 
 		@Override
 		public void handle(Event event) {
@@ -221,7 +259,7 @@ public class MyGraphDrawer extends Region{
 		}
 	};
 	
-	private EventHandler<Event> onNodeMouseUp = new EventHandler<Event>() {
+	private MyNodeEventHandler onNodeMouseUp = new MyNodeEventHandler() {
 
 		@Override
 		public void handle(Event event) {
