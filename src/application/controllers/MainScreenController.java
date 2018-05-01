@@ -1,28 +1,36 @@
 package application.controllers;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import application.Main;
 import deadlock_detector.MyResource;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class MainScreenController implements Initializable{
-	@FXML private Button addButton;
+	@FXML private Button addButtton;
 	@FXML private TextField resourceName;
 	@FXML private TextField resourceId;
 	@FXML private VBox tableViewContainer;
 	@FXML private CheckBox autoIncrementCheck;
+	@FXML private AnchorPane rootPane;
 	
 	private TableView<MyResource> resourcesTableView;
 	private TableColumn<MyResource, String> column;
@@ -35,7 +43,7 @@ public class MainScreenController implements Initializable{
 	}
 
 	@FXML 
-	private void handleButtonAction(ActionEvent event) {
+	private void handleSaveButtonAction(ActionEvent event) {
 		MyResource resource  = new MyResource(
 				resourceName.getText(), 
 				resourceId.getText()
@@ -47,6 +55,26 @@ public class MainScreenController implements Initializable{
 			Integer nextResourceId = Integer.parseInt(this.resourceId.getText()) + 1;
 			this.resourceId.setText(nextResourceId.toString());
 		}
+	}
+	
+	@FXML 
+	private void handleStartButtonAction(ActionEvent event) throws IOException {
+		FXMLLoader loader = new FXMLLoader();
+	    loader.setLocation(Main.class.getResource("GraphScreen.fxml"));
+	    
+		Node eventNode = (Node) event.getSource();
+		Stage currentStage = (Stage) eventNode.getScene().getWindow();
+		
+		Scene nextScene = new Scene(loader.load());
+		
+		GraphScreenController controller = loader.getController();
+		controller.receiveData(myResources);
+		
+		
+		currentStage.setScene(nextScene);
+		currentStage.show();
+		
+		controller.viewDidLoad();
 	}
 	
 	@FXML 
@@ -83,10 +111,11 @@ public class MainScreenController implements Initializable{
 		resourcesTableView = new TableView<MyResource>();
 		resourcesTableView.getColumns().add(column);
 		resourcesTableView.getColumns().add(column2);
-		resourcesTableView.setMinWidth(500);
 		resourcesTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-		resourcesTableView.setMinHeight(300);
+		resourcesTableView.setMinHeight(250);
 		
 		tableViewContainer.getChildren().add(resourcesTableView);
+		
+		
 	}
 }

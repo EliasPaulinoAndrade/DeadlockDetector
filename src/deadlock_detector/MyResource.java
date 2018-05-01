@@ -5,7 +5,7 @@ import java.util.concurrent.Semaphore;
 
 /** it represents the resource item from the operational system*/
 
-public class MyResource implements MyNodeValue, Runnable{
+public class MyResource implements MyNodeValue{
 	private String name;	
 	private String resourceIdentifier;
 	private Semaphore semaphore;
@@ -17,21 +17,20 @@ public class MyResource implements MyNodeValue, Runnable{
 		this.semaphore = new Semaphore(1);
 	}	
 
+	public void claim() throws InterruptedException {
+		semaphore.acquire();
+	}
+	
+	public void release() {
+		semaphore.release();
+	}
+	
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	
-	public Semaphore getSemaphore() {
-		return semaphore;
-	}
-
-	public void setSemaphore(Semaphore semaphore) {
-		this.semaphore = semaphore;
 	}
 
 	public String getResourceIdentifier() {
@@ -44,13 +43,7 @@ public class MyResource implements MyNodeValue, Runnable{
 
 	@Override
 	public String getStringValue() {
-		return name;
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
+		return resourceIdentifier;
 	}
 	
 }

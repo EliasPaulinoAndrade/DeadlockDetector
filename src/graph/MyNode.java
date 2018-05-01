@@ -9,9 +9,8 @@ public class MyNode<NodeElement extends MyNodeValue>{
 	private NodeElement value;
 	private List<MyEdge<?>> edges;
 	
-	public MyNode(NodeElement value, Integer id) {
+	public MyNode(NodeElement value) {
 		this.value = value;
-		this.id = id;
 		this.edges = new LinkedList<>();
 	}
 	
@@ -19,6 +18,10 @@ public class MyNode<NodeElement extends MyNodeValue>{
 		return id;
 	}
 
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	
 	public NodeElement getValue() {
 		return value;
 	}

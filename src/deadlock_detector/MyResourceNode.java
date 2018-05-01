@@ -7,10 +7,10 @@ import graph.MyNodeValue;
 /*its a node subclass that restricts the destination edges's nodes, destination nodes can never be the same type that it.
  */
 
-public class MyResourceNode<NodeElement extends MyNodeValue> extends MyNode<NodeElement> {
+public class MyResourceNode<NodeElement extends MyResource> extends MyNode<NodeElement> {
 
-	public MyResourceNode(NodeElement value, Integer id) {
-		super(value, id);
+	public MyResourceNode(NodeElement value) {
+		super(value);
 	}
 
 	@Override

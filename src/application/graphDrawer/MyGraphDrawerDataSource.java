@@ -15,4 +15,5 @@ public interface MyGraphDrawerDataSource {
 	Integer graphDrawerNumberOfEdgesStartingFromNodeAtIndex(MyGraphDrawer graphDrawer, Integer index);
 	Integer graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(MyGraphDrawer graphDrawer, Integer edgeIndex, Integer nodeIndex);
 	Double graphDrawerEdgeStrokeWidth(MyGraphDrawer graphDrawer);
+	Boolean graphDrawerNodesCanMove(MyGraphDrawer graphDrawer);
 }

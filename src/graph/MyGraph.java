@@ -1,5 +1,6 @@
 package graph;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class MyGraph{
 	}
 
 	public Boolean addNode(MyNode<?> node) {
+		node.setId(this.vertices.size());
 		return this.vertices.add(node);
 	}
 	

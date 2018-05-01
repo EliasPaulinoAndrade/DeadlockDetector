@@ -5,15 +5,13 @@ import graph.MyNodeValue;
 /* it is resposible for trying to allocate new resources from time to time*/
 
 public class MyProcess implements MyNodeValue, Runnable{
-	private String name;
-	private Integer processIdentifier;
+	private String processIdentifier;
 	private Double restTime;
 	private Double activeTime;
 
 	
-	public MyProcess(String name, Integer processIdentifier, Double restTime, Double activeTime) {
+	public MyProcess(String processIdentifier, Double restTime, Double activeTime) {
 		super();
-		this.name = name;
 		this.processIdentifier = processIdentifier;
 		this.restTime = restTime;
 		this.activeTime = activeTime;
@@ -21,7 +19,7 @@ public class MyProcess implements MyNodeValue, Runnable{
 
 	@Override
 	public String getStringValue() {
-		return name;
+		return processIdentifier.toString();
 	}
 
 	@Override
@@ -30,19 +28,11 @@ public class MyProcess implements MyNodeValue, Runnable{
 		
 	}
 	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public Integer getProcessIdentifier() {
+	public String getProcessIdentifier() {
 		return processIdentifier;
 	}
 
-	public void setProcessIdentifier(Integer processIdentifier) {
+	public void setProcessIdentifier(String processIdentifier) {
 		this.processIdentifier = processIdentifier;
 	}
 
