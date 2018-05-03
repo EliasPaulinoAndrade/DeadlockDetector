@@ -1,14 +1,18 @@
 package application.graphDrawer;
 
+import java.awt.Event;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Random;
 
-import application.graphDrawer.eventHandlers.MyNodeClickDownHandler;
-import application.graphDrawer.eventHandlers.MyNodeClickUpHandler;
-import application.graphDrawer.eventHandlers.MyNodeDragHandler;
+import application.graphDrawer.eventHandlers.GDNodeClickDownHandler;
+import application.graphDrawer.eventHandlers.GDNodeClickUpHandler;
+import application.graphDrawer.eventHandlers.GDNodeDragHandler;
+import javafx.event.EventHandler;
+import javafx.geometry.Dimension2D;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
@@ -25,32 +29,32 @@ import javafx.scene.paint.Color;
  * this class use the delegate and datasource to draw the graph with the user especifications caring
  * */
 
-public class MyGraphDrawer extends Region{
-	private MyGraphDrawerDataSource dataSource;
-	private MyGraphDrawerDelegate delegate;
+public class GDGraphDrawer extends Region{
+	private GDGraphDrawerDataSource dataSource;
+	private GDGraphDrawerDelegate delegate;
 	
-	private Dictionary<Integer, MyGraphicsNode> nodes;
+	private Dictionary<Integer, GDGraphicsNode> nodes;
 	
-	public MyGraphDrawer() {
+	public GDGraphDrawer() {
 		super();
 		this.nodes = new Hashtable<>();
 		
 	}
 
-	public MyGraphDrawerDataSource getDataSource() {
+	public GDGraphDrawerDataSource getDataSource() {
 		return dataSource;
 	}
 
-	public void setDataSource(MyGraphDrawerDataSource dataSource) {
+	public void setDataSource(GDGraphDrawerDataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 	
 	
-	public MyGraphDrawerDelegate getDelegate() {
+	public GDGraphDrawerDelegate getDelegate() {
 		return delegate;
 	}
 
-	public void setDelegate(MyGraphDrawerDelegate delegate) {
+	public void setDelegate(GDGraphDrawerDelegate delegate) {
 		this.delegate = delegate;
 	}
 
@@ -62,14 +66,14 @@ public class MyGraphDrawer extends Region{
 		}
 		
 		Color rootColor = dataSource.graphDrawerGraphColor(this);
-		MySize rootSize = dataSource.graphDrawerGraphSize(this);
+		Dimension2D rootSize = dataSource.graphDrawerGraphSize(this);
 		
 		if(rootColor == null) {
-			rootColor = MyGraphDrawerDefaultValues.graphDrawerGraphColor;
+			rootColor = GDGraphDrawerDefaultValues.graphDrawerGraphColor;
 		}
 		
 		if(rootSize == null) {
-			rootSize = MyGraphDrawerDefaultValues.graphDrawerGraphSize;
+			rootSize = GDGraphDrawerDefaultValues.graphDrawerGraphSize;
 		}
 		
 		Background rootBackground = new Background(new BackgroundFill(rootColor, null, null));
@@ -91,26 +95,26 @@ public class MyGraphDrawer extends Region{
 		}
 		
 		Node node = dataSource.graphDrawerNodeViewForNodeAtIndex(this, index);
-		MySize containerSize = dataSource.graphDrawerNodeMaxSize(this);
-		MySize rootSize = dataSource.graphDrawerGraphSize(this);
+		Dimension2D containerSize = dataSource.graphDrawerNodeMaxSize(this);
+		Dimension2D rootSize = dataSource.graphDrawerGraphSize(this);
 		
 		if(node == null) {
 			return ;
 		}
 		if(containerSize == null) {
-			containerSize = MyGraphDrawerDefaultValues.graphDrawerNodeMaxSize;
+			containerSize = GDGraphDrawerDefaultValues.graphDrawerNodeMaxSize;
 		}
 		
 		if(this.getWidth()!=0 && this.getHeight()!=0) {
-			rootSize = new MySize(this.getWidth(), this.getHeight());
+			rootSize = new Dimension2D(this.getWidth(), this.getHeight());
 		}
 		else if(rootSize == null) {
-			rootSize = MyGraphDrawerDefaultValues.graphDrawerGraphSize;
+			rootSize = GDGraphDrawerDefaultValues.graphDrawerGraphSize;
 		}
 		
 		
 		Pane containerNode = new StackPane();
-		MyGraphicsNode graphicsNode = new MyGraphicsNode(containerNode, index);
+		GDGraphicsNode graphicsNode = new GDGraphicsNode(containerNode, index);
 
 		containerNode.setMinHeight(containerSize.getHeight());
 		containerNode.setMinWidth(containerSize.getWidth());
@@ -121,10 +125,24 @@ public class MyGraphDrawer extends Region{
 		this.nodes.put(index, graphicsNode);
 		this.getChildren().add(containerNode);	
 		
-		this.addNodeListeners(graphicsNode);
+		this.addNodeMoveListeners(graphicsNode);
+		this.addNodeDelegateListeners(node);
 	}
 	
-	private void addNodeListeners(MyGraphicsNode graphicsNode) {
+	private void addNodeDelegateListeners(Node node) {
+		if(delegate == null) {
+			return;
+		}
+		node.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				delegate.graphDrawerNodeClicked(GDGraphDrawer.this);
+			}
+			
+		});
+	}
+	private void addNodeMoveListeners(GDGraphicsNode graphicsNode) {
 		/*check if the nodes can move, and set they listeners*/
 		
 		if(dataSource == null) {
@@ -133,20 +151,20 @@ public class MyGraphDrawer extends Region{
 		
 		Boolean nodesCanMove = dataSource.graphDrawerNodesCanMove(this);
 		if(nodesCanMove == null) {
-			nodesCanMove = MyGraphDrawerDefaultValues.graphDrawerNodesCanMove;
+			nodesCanMove = GDGraphDrawerDefaultValues.graphDrawerNodesCanMove;
 		}
 		
 		if(dataSource.graphDrawerNodesCanMove(this)) {
-			graphicsNode.setOnNodeMouseDown(new MyNodeClickDownHandler(graphicsNode, this));
-			graphicsNode.setOnNodeDragged(new MyNodeDragHandler(graphicsNode, this));
-			graphicsNode.setOnNodeMouseUp(new MyNodeClickUpHandler(graphicsNode, this));
+			graphicsNode.setOnNodeMouseDown(new GDNodeClickDownHandler(graphicsNode, this));
+			graphicsNode.setOnNodeDragged(new GDNodeDragHandler(graphicsNode, this));
+			graphicsNode.setOnNodeMouseUp(new GDNodeClickUpHandler(graphicsNode, this));
 		}
 	}
 	
 	public void removeEdgeFromNodeAt(Integer nodeIndex, Integer edgeIndex) {
 		/*remove a edge line from a node */
 		
-		MyGraphicsNode startGraphicsNode = this.nodes.get(nodeIndex);
+		GDGraphicsNode startGraphicsNode = this.nodes.get(nodeIndex);
 		
 		
 		this.getChildren().remove(startGraphicsNode.getStartingEdges().get(edgeIndex).getNode());
@@ -166,25 +184,30 @@ public class MyGraphDrawer extends Region{
 		
 		Color edgeColor = dataSource.graphDrawerEdgesColor(this);
 		Double edgeWidth = dataSource.graphDrawerEdgeStrokeWidth(this);
+		GDEdgeStyle edgeStyle = dataSource.graphDrawerStyleForEdgeOfNodeAt(this, nodeIndex, edgeIndex);
 		
 		if(edgeColor == null) {
-			edgeColor = MyGraphDrawerDefaultValues.graphDrawerEdgesColor;
+			edgeColor = GDGraphDrawerDefaultValues.graphDrawerEdgesColor;
 		}
 		if(edgeWidth == null) {
-			edgeWidth = MyGraphDrawerDefaultValues.graphDrawerEdgeStrokeWidth;
+			edgeWidth = GDGraphDrawerDefaultValues.graphDrawerEdgeStrokeWidth;
+		}
+		if(edgeStyle == null) {
+			edgeStyle = GDGraphDrawerDefaultValues.graphDrawerStyleForEdgeOfNodeAt;
 		}
 		
-		MyGraphicsNode startGraphicsNode = this.nodes.get(nodeIndex);
+		GDGraphicsNode startGraphicsNode = this.nodes.get(nodeIndex);
 		Node startNode = startGraphicsNode.getNode();
 		
-		MyGraphicsNode endGraphicsNode = this.nodes.get(destinationNodeIndex);
+		GDGraphicsNode endGraphicsNode = this.nodes.get(destinationNodeIndex);
 		Node destinationNode = endGraphicsNode.getNode();
 		
-		MyGraphLine currentLineEdge = new MyGraphLine(startNode, destinationNode);
+		GDGraphLine currentLineEdge = new GDGraphLine(startNode, destinationNode);
 		currentLineEdge.setStroke(edgeColor);
 		currentLineEdge.setStrokeWidth(edgeWidth);
+		currentLineEdge.setLineStyle(edgeStyle);
 		
-		MyGraphicsEdge graphicsEdge = new MyGraphicsEdge(currentLineEdge, startGraphicsNode, endGraphicsNode);
+		GDGraphicsEdge graphicsEdge = new GDGraphicsEdge(currentLineEdge, startGraphicsNode, endGraphicsNode);
 		
 		this.getChildren().add(currentLineEdge);
 		startGraphicsNode.getStartingEdges().put(edgeIndex, graphicsEdge);
@@ -203,11 +226,11 @@ public class MyGraphDrawer extends Region{
 			return;
 		}
 		
-		Dictionary<Integer, MyGraphicsEdge> nodeEdges = this.nodes.get(nodeIndex).getStartingEdges();
+		Dictionary<Integer, GDGraphicsEdge> nodeEdges = this.nodes.get(nodeIndex).getStartingEdges();
 
 		Node node = this.nodes.get(nodeIndex).getNode();
 		Node destinationNode = this.nodes.get(destinationNodeIndex).getNode();
-		MyGraphLine edgeLine = nodeEdges.get(edgeIndex).getNode();
+		GDGraphLine edgeLine = nodeEdges.get(edgeIndex).getNode();
 	
 		edgeLine.setLinePosition(node, destinationNode);	
 	}
@@ -221,9 +244,9 @@ public class MyGraphDrawer extends Region{
 			return;
 		}*/
 		
-		Dictionary<Integer, MyGraphicsEdge> nodeEdges = this.nodes.get(destinationNodeIndex).getEndingEdges();
-		MyGraphicsEdge edge = nodeEdges.get(edgeIndex);
-		MyGraphLine edgeLine = edge.getNode();
+		Dictionary<Integer, GDGraphicsEdge> nodeEdges = this.nodes.get(destinationNodeIndex).getEndingEdges();
+		GDGraphicsEdge edge = nodeEdges.get(edgeIndex);
+		GDGraphLine edgeLine = edge.getNode();
 		
 		Node node = edge.getStartGraphicsNode().getNode();
 		Node destinationNode = this.nodes.get(destinationNodeIndex).getNode();
@@ -238,10 +261,10 @@ public class MyGraphDrawer extends Region{
 			return;
 		}
 		
-		Dictionary<Integer, MyGraphicsEdge> startingNodeEdges = this.nodes.get(nodeIndex).getStartingEdges();
+		Dictionary<Integer, GDGraphicsEdge> startingNodeEdges = this.nodes.get(nodeIndex).getStartingEdges();
 		Enumeration<Integer> startingEdgesIndices = startingNodeEdges.keys();
 		
-		Dictionary<Integer, MyGraphicsEdge> endingNodeEdges = this.nodes.get(nodeIndex).getEndingEdges();
+		Dictionary<Integer, GDGraphicsEdge> endingNodeEdges = this.nodes.get(nodeIndex).getEndingEdges();
 		Enumeration<Integer> endingEdgesIndices = endingNodeEdges.keys();
 		
 		Integer currentEdgeIndex;	
@@ -306,7 +329,7 @@ public class MyGraphDrawer extends Region{
 		}
 	}
 	
-	private void setNodeInRandomUnusedPoint(MySize containerSize, Node targetNode) {
+	private void setNodeInRandomUnusedPoint(Dimension2D containerSize, Node targetNode) {
 		/*
 		 * set a node good position based on the container size, node size, and other nodes position, it will try a randomic position
 		 * until find the good one
@@ -318,17 +341,17 @@ public class MyGraphDrawer extends Region{
 		
 		Random random = new Random();
 		
-		MySize nodeMaxSize = dataSource.graphDrawerNodeMaxSize(this);
+		Dimension2D nodeMaxSize = dataSource.graphDrawerNodeMaxSize(this);
 		
 		if(nodeMaxSize == null) {
-			nodeMaxSize = MyGraphDrawerDefaultValues.graphDrawerNodeMaxSize;
+			nodeMaxSize = GDGraphDrawerDefaultValues.graphDrawerNodeMaxSize;
 		}
 
-		int nodeMaxWidth = (int) Math.ceil(nodeMaxSize.getWidth().doubleValue());
-		int nodeMaxHeight = (int) Math.ceil(nodeMaxSize.getHeight().doubleValue());
+		int nodeMaxWidth = (int) Math.ceil(nodeMaxSize.getWidth());
+		int nodeMaxHeight = (int) Math.ceil(nodeMaxSize.getHeight());
 		
-		int x = random.nextInt(containerSize.getWidth().intValue() - nodeMaxWidth);
-		int y = random.nextInt(containerSize.getHeight().intValue() - nodeMaxHeight);
+		int x = random.nextInt((int)containerSize.getWidth() - nodeMaxWidth);
+		int y = random.nextInt((int)containerSize.getHeight()- nodeMaxHeight);
 		
 		targetNode.setLayoutX(x);
 		targetNode.setLayoutY(y);		

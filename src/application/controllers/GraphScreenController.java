@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import application.datasources.MyDeadlockGraphDataSource;
-import application.graphDrawer.MyGraphDrawer;
+import application.delegates.MyDeadlockGraphDelegate;
+import application.graphDrawer.GDGraphDrawer;
 import deadlock_detector.MyOpSystem;
 import deadlock_detector.MyProcess;
 import deadlock_detector.MyProcessNode;
 import deadlock_detector.MyResource;
-import graph.MyGraph;
+import graph.GPGraph;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -35,22 +36,21 @@ public class GraphScreenController implements Initializable {
 	private TableColumn<MyProcess, String> column2;
 	private TableColumn<MyProcess, String> column3;
 	
-	private MyOpSystem operationalSystem;
-	
 	private MyDeadlockGraphDataSource graphDataSource;
-	private MyGraphDrawer drawer;
-
+	private MyDeadlockGraphDelegate graphDelegate;
+	
+	private GDGraphDrawer drawer;
 	
 	public void receiveData(List<MyResource> resources, Integer opSystemRestTime) {
 		/*when the controller receives the data from the older screen it creates the graph with the data*/
+		drawer = new GDGraphDrawer();
 		
-		drawer = new MyGraphDrawer();
-		
-		this.operationalSystem = new MyOpSystem(opSystemRestTime, resources, drawer);
-		this.graphDataSource = new MyDeadlockGraphDataSource(this.operationalSystem.getGraph(), this.graphContainer);
-		
+		MyOpSystem.setInstance(opSystemRestTime, resources, drawer);
+		this.graphDataSource = new MyDeadlockGraphDataSource(MyOpSystem.shared().getGraph(), this.graphContainer);
+		this.graphDelegate = new MyDeadlockGraphDelegate();
 		
 		drawer.setDataSource(graphDataSource);
+		drawer.setDelegate(graphDelegate);
 		
 		graphContainer.getChildren().add(drawer);	
 
@@ -97,15 +97,14 @@ public class GraphScreenController implements Initializable {
 		MyProcess process = new MyProcess(
 				processId.getText(), 
 				Integer.parseInt(processRestTime.getText()), 
-				Integer.parseInt(processActiveTime.getText()),
-				operationalSystem
+				Integer.parseInt(processActiveTime.getText())
 				);
 		MyProcessNode<MyProcess> processNode = new MyProcessNode<MyProcess>(process);
 		process.setSelfNode(processNode);
 		
-		MyGraph graph = operationalSystem.getGraph();
+		GPGraph graph = MyOpSystem.shared().getGraph();
 		
-		operationalSystem.getProcesses().add(processNode);
+		MyOpSystem.shared().getProcesses().add(processNode);
 		processTableView.getItems().add(process);	
 		graph.addNode(processNode);
 		drawer.addNodeAt(graph.numberOfNodes() - 1);
@@ -126,9 +125,9 @@ public class GraphScreenController implements Initializable {
 		if(autoIdProcess.isSelected()) {
 			this.processId.setEditable(false);
 			this.processId.setDisable(true);
-			Integer processSize = operationalSystem.getProcesses().size();
+			Integer processSize = MyOpSystem.shared().getProcesses().size();
 			if(processSize > 0) {
-				MyProcess lastProcess = operationalSystem.getProcesses().get(processSize - 1).getValue();
+				MyProcess lastProcess = MyOpSystem.shared().getProcesses().get(processSize - 1).getValue();
 				Integer nextResourceId = Integer.parseInt(lastProcess.getProcessIdentifier()) + 1;
 				this.processId.setText(nextResourceId.toString());
 			}

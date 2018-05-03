@@ -1,20 +1,20 @@
 package graph;
 
 /*each edge has the a destination node and a path information, like: 'distance between houses', 'time' and etc*/
-public class MyEdge<PathElement> {
-	private MyNode<?> destinationVertex;
+public class GPEdge<PathElement> {
+	private GPNode<?> destinationVertex;
 	private PathElement pathInformation;
 	
-	public MyEdge(MyNode<?> destinationVertex, PathElement pathInformation) {
+	public GPEdge(GPNode<?> destinationVertex, PathElement pathInformation) {
 		this.destinationVertex = destinationVertex;
 		this.pathInformation = pathInformation;
 	}
 
-	public MyNode<?> getDestinationVertex() {
+	public GPNode<?> getDestinationVertex() {
 		return destinationVertex;
 	}
 
-	public void setDestinationVertex(MyNode<?> destinationVertex) {
+	public void setDestinationVertex(GPNode<?> destinationVertex) {
 		this.destinationVertex = destinationVertex;
 	}
 

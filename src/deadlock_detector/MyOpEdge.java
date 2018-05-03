@@ -1,9 +1,9 @@
 package deadlock_detector;
 
-import graph.MyEdge;
-import graph.MyNode;
+import graph.GPEdge;
+import graph.GPNode;
 
-public class MyOpEdge extends MyEdge<Void>{
+public class MyOpEdge extends GPEdge<Void>{
 	
 	public MyOpEdge(MyResourceNode<MyResource> destinationVertex) {
 		super(destinationVertex, null);

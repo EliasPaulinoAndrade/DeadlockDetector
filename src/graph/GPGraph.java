@@ -1,36 +1,35 @@
 package graph;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 
 /*graph's class, it has a linked list for do the 'adjacency list' implementation */
-public class MyGraph{
-	private List<MyNode<?>> vertices;
+public class GPGraph{
+	private List<GPNode<?>> vertices;
 
-	public MyGraph() {
+	public GPGraph() {
 		vertices = new LinkedList<>();
 	}
 	
-	public Boolean addEdgeToNode(MyEdge<?> edge, MyNode<?> node) {
-		MyNode<?> destinationNode = edge.getDestinationVertex();
+	public Boolean addEdgeToNode(GPEdge<?> edge, GPNode<?> node) {
+		GPNode<?> destinationNode = edge.getDestinationVertex();
 		if(vertices.contains(destinationNode)){
 			return node.addEdge(edge);
 		}
 		return false;
 	}
 	
-	public Boolean removeEdgeFromNode(MyEdge<?> edge, MyNode<?> node) {
+	public Boolean removeEdgeFromNode(GPEdge<?> edge, GPNode<?> node) {
 		return node.removeEdge(edge);
 	}
 
-	public Boolean addNode(MyNode<?> node) {
+	public Boolean addNode(GPNode<?> node) {
 		node.setId(this.vertices.size());
 		return this.vertices.add(node);
 	}
 	
-	public Boolean removeNode(MyNode<?> node) {
+	public Boolean removeNode(GPNode<?> node) {
 		return this.vertices.remove(node);
 	}
 	
@@ -38,7 +37,7 @@ public class MyGraph{
 		return this.vertices.size();
 	}
 	
-	public MyNode<?> getNodeAt(Integer index){
+	public GPNode<?> getNodeAt(Integer index){
 		return vertices.get(index);
 	}
 
@@ -46,7 +45,7 @@ public class MyGraph{
 	public String toString() {
 		StringBuilder graphStringBuilder = new StringBuilder();
 		
-		for(MyNode<?> node : vertices) {
+		for(GPNode<?> node : vertices) {
 			graphStringBuilder.append(node);
 			graphStringBuilder.append("\n");
 		}

@@ -1,59 +1,53 @@
 package application.datasources;
 
 import application.ScreenConstants;
-import application.graphDrawer.MyGraphDrawer;
-import application.graphDrawer.MyGraphDrawerDataSource;
-import application.graphDrawer.MySize;
+import application.graphDrawer.GDEdgeStyle;
+import application.graphDrawer.GDGraphDrawer;
+import application.graphDrawer.GDGraphDrawerDataSource;
 import deadlock_detector.MyResource;
 import deadlock_detector.MyResourceNode;
-import graph.MyGraph;
-import graph.MyNode;
+import graph.GPGraph;
+import graph.GPNode;
+import graph.GPNodeValue;
+import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 /*data source implementation for deadlock threads problem*/
 
-public class MyDeadlockGraphDataSource implements MyGraphDrawerDataSource{
-	private MyGraph graph;
+public class MyDeadlockGraphDataSource implements GDGraphDrawerDataSource{
+	private GPGraph graph;
 	private Pane graphContainer;
 	
-	public MyDeadlockGraphDataSource(MyGraph graph, Pane graphContainer) {
+	public MyDeadlockGraphDataSource(GPGraph graph, Pane graphContainer) {
 		super();
 		this.graph = graph;
 		this.graphContainer = graphContainer;
 	}
 
 	@Override
-	public Integer graphDrawerNumberOfNodes(MyGraphDrawer graphDrawer) {
+	public Integer graphDrawerNumberOfNodes(GDGraphDrawer graphDrawer) {
 		
 		return this.graph.numberOfNodes();
 	}
 
 	@Override
-	public Node graphDrawerNodeViewForNodeAtIndex(MyGraphDrawer graphDrawer, Integer index) {
+	public Node graphDrawerNodeViewForNodeAtIndex(GDGraphDrawer graphDrawer, Integer index) {
 		
-		MyNode<?> node = this.graph.getNodeAt(index);
+		GPNode<?> node = this.graph.getNodeAt(index);
 		VBox nodeView = new VBox();
 		
 		BorderStroke stroke = new BorderStroke(
@@ -103,56 +97,67 @@ public class MyDeadlockGraphDataSource implements MyGraphDrawerDataSource{
 	}
 
 	@Override
-	public MySize graphDrawerGraphSize(MyGraphDrawer graphDrawer) {
+	public Dimension2D graphDrawerGraphSize(GDGraphDrawer graphDrawer) {
 	
-		return new MySize(graphContainer.getPrefWidth(), graphContainer.getPrefHeight());
+		return new Dimension2D(graphContainer.getPrefWidth(), graphContainer.getPrefHeight());
 	}
 
 	@Override
-	public Color graphDrawerGraphColor(MyGraphDrawer graphDrawer) {
+	public Color graphDrawerGraphColor(GDGraphDrawer graphDrawer) {
 		
 		return Color.BLACK;
 	}
 
 	@Override
-	public MySize graphDrawerNodeMaxSize(MyGraphDrawer graphDrawer) {
+	public Dimension2D graphDrawerNodeMaxSize(GDGraphDrawer graphDrawer) {
 
-		return new MySize(100, 100);
+		return new Dimension2D(100, 100);
 	}
 
 	@Override
-	public Integer graphDrawerNumberOfEdgesStartingFromNodeAtIndex(MyGraphDrawer graphDrawer, Integer index) {
+	public Integer graphDrawerNumberOfEdgesStartingFromNodeAtIndex(GDGraphDrawer graphDrawer, Integer index) {
 
 		return this.graph.getNodeAt(index).numberOfEdges();
 	}
 
 	@Override
-	public Integer graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(MyGraphDrawer graphDrawer, Integer edgeIndex, Integer nodeIndex) {
+	public Integer graphDrawerNodeDestinationFromEdgeAtIndexFromNodeAtIndex(GDGraphDrawer graphDrawer, Integer edgeIndex, Integer nodeIndex) {
 		return this.graph.getNodeAt(nodeIndex).getEdgeAt(edgeIndex).getDestinationVertex().getId();
 	}
 
 	@Override
-	public Color graphDrawerEdgesColor(MyGraphDrawer graphDrawer) {
+	public Color graphDrawerEdgesColor(GDGraphDrawer graphDrawer) {
 		
 		return Color.BLUE;
 	}
 
 	@Override
-	public Double graphDrawerEdgeStrokeWidth(MyGraphDrawer graphDrawer) {
+	public Double graphDrawerEdgeStrokeWidth(GDGraphDrawer graphDrawer) {
 
 		return 3.0;
 	}
 
 	@Override
-	public Boolean graphDrawerNodesCanMove(MyGraphDrawer graphDrawer) {
+	public Boolean graphDrawerNodesCanMove(GDGraphDrawer graphDrawer) {
 		
 		return true;
 	}
 
 	@Override
-	public Color graphDrawerTintColor(MyGraphDrawer graphDrawer) {
+	public Color graphDrawerTintColor(GDGraphDrawer graphDrawer) {
 		
 		return Color.CHARTREUSE;
+	}
+
+	@Override
+	public GDEdgeStyle graphDrawerStyleForEdgeOfNodeAt(GDGraphDrawer graphDrawer, Integer nodeIndex,
+			Integer edgeIndex) {
+		GPNode<?> destinationVertex =  this.graph.getNodeAt(nodeIndex).getEdgeAt(edgeIndex).getDestinationVertex();
+		
+		if(destinationVertex instanceof MyResourceNode<?>) {
+			return GDEdgeStyle.MEDIUM_DOTTED;
+		}
+		return GDEdgeStyle.SOLID;
 	}
 	
 

@@ -1,9 +1,9 @@
 package application.graphDrawer.eventHandlers;
 
-import application.graphDrawer.MyGraphDrawer;
-import application.graphDrawer.MyGraphDrawerDataSource;
-import application.graphDrawer.MyGraphDrawerDefaultValues;
-import application.graphDrawer.MyGraphicsNode;
+import application.graphDrawer.GDGraphDrawer;
+import application.graphDrawer.GDGraphDrawerDataSource;
+import application.graphDrawer.GDGraphDrawerDefaultValues;
+import application.graphDrawer.GDGraphicsNode;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.scene.layout.Border;
@@ -15,15 +15,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 /*when the mouse enters on the node, a node border is set*/
-public class MyNodeClickDownHandler implements MyNodeEventHandler{
+public class GDNodeClickDownHandler implements GDNodeEventHandler{
 	
-	private MyGraphicsNode graphicsNode;
-	private MyGraphDrawer graphDrawer;
+	private GDGraphicsNode graphicsNode;
+	private GDGraphDrawer graphDrawer;
 	
 	@Override
 	public void handle(Event event) {
 	
-		MyGraphDrawerDataSource dataSource = graphDrawer.getDataSource();
+		GDGraphDrawerDataSource dataSource = graphDrawer.getDataSource();
 		if(dataSource == null) {
 			return;
 		}
@@ -31,7 +31,7 @@ public class MyNodeClickDownHandler implements MyNodeEventHandler{
 		Color tintColor = dataSource.graphDrawerTintColor(graphDrawer);
 		
 		if(tintColor == null) {
-			tintColor = MyGraphDrawerDefaultValues.graphDrawerTintColor;
+			tintColor = GDGraphDrawerDefaultValues.graphDrawerTintColor;
 		}
 		
 		Pane containerNode = (Pane) event.getSource();
@@ -45,30 +45,30 @@ public class MyNodeClickDownHandler implements MyNodeEventHandler{
 		containerNode.setBorder(border);
 	}
 
-	public MyNodeClickDownHandler(MyGraphicsNode graphicsNode, MyGraphDrawer graphDrawer) {
+	public GDNodeClickDownHandler(GDGraphicsNode graphicsNode, GDGraphDrawer graphDrawer) {
 		super();
 		this.graphicsNode = graphicsNode;
 		this.graphDrawer = graphDrawer;
 	}
 
 	@Override
-	public MyGraphicsNode getGraphicsNode() {
+	public GDGraphicsNode getGraphicsNode() {
 		return this.graphicsNode;
 	}
 
 	@Override
-	public void setGraphicsNode(MyGraphicsNode graphicsNode) {
+	public void setGraphicsNode(GDGraphicsNode graphicsNode) {
 		this.graphicsNode = graphicsNode;
 		
 	}
 
 	@Override
-	public MyGraphDrawer getMyGraphDrawer() {
+	public GDGraphDrawer getMyGraphDrawer() {
 		return this.graphDrawer;
 	}
 
 	@Override
-	public void setMyGraphDrawer(MyGraphDrawer graphDrawer) {
+	public void setMyGraphDrawer(GDGraphDrawer graphDrawer) {
 		this.graphDrawer = graphDrawer;
 	}
 	

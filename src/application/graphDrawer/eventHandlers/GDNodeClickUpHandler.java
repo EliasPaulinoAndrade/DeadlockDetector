@@ -1,16 +1,16 @@
 package application.graphDrawer.eventHandlers;
 
-import application.graphDrawer.MyGraphDrawer;
-import application.graphDrawer.MyGraphicsNode;
+import application.graphDrawer.GDGraphDrawer;
+import application.graphDrawer.GDGraphicsNode;
 import javafx.event.Event;
 import javafx.scene.layout.Pane;
 
 /*when the mouse leaves the node, the node border is removed
  * */
-public class MyNodeClickUpHandler implements MyNodeEventHandler{
+public class GDNodeClickUpHandler implements GDNodeEventHandler{
 	
-	private MyGraphicsNode graphicsNode;
-	private MyGraphDrawer graphDrawer;
+	private GDGraphicsNode graphicsNode;
+	private GDGraphDrawer graphDrawer;
 	
 	@Override
 	public void handle(Event event) {
@@ -18,30 +18,30 @@ public class MyNodeClickUpHandler implements MyNodeEventHandler{
 		containerNode.setBorder(null);	
 	}
 	
-	public MyNodeClickUpHandler(MyGraphicsNode graphicsNode, MyGraphDrawer graphDrawer) {
+	public GDNodeClickUpHandler(GDGraphicsNode graphicsNode, GDGraphDrawer graphDrawer) {
 		super();
 		this.graphicsNode = graphicsNode;
 		this.graphDrawer = graphDrawer;
 	}
 
 	@Override
-	public MyGraphicsNode getGraphicsNode() {
+	public GDGraphicsNode getGraphicsNode() {
 		return this.graphicsNode;
 	}
 
 	@Override
-	public void setGraphicsNode(MyGraphicsNode graphicsNode) {
+	public void setGraphicsNode(GDGraphicsNode graphicsNode) {
 		this.graphicsNode = graphicsNode;
 		
 	}
 
 	@Override
-	public MyGraphDrawer getMyGraphDrawer() {
+	public GDGraphDrawer getMyGraphDrawer() {
 		return this.graphDrawer;
 	}
 
 	@Override
-	public void setMyGraphDrawer(MyGraphDrawer graphDrawer) {
+	public void setMyGraphDrawer(GDGraphDrawer graphDrawer) {
 		this.graphDrawer = graphDrawer;
 	}
 

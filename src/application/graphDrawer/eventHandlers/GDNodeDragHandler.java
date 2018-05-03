@@ -1,32 +1,32 @@
 package application.graphDrawer.eventHandlers;
 
-import application.graphDrawer.MyGraphDrawer;
-import application.graphDrawer.MyGraphDrawerDataSource;
-import application.graphDrawer.MyGraphDrawerDefaultValues;
-import application.graphDrawer.MyGraphicsNode;
-import application.graphDrawer.MySize;
+import application.graphDrawer.GDGraphDrawer;
+import application.graphDrawer.GDGraphDrawerDataSource;
+import application.graphDrawer.GDGraphDrawerDefaultValues;
+import application.graphDrawer.GDGraphicsNode;
 import javafx.event.Event;
+import javafx.geometry.Dimension2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 
 /*when the node is dragged, it follows the mouse position(but only if the mouse is in the bounds)*/
-public class MyNodeDragHandler implements MyNodeEventHandler{
-	private MyGraphicsNode graphicsNode;
-	private MyGraphDrawer graphDrawer;
+public class GDNodeDragHandler implements GDNodeEventHandler{
+	private GDGraphicsNode graphicsNode;
+	private GDGraphDrawer graphDrawer;
 	
 	@Override
 	public void handle(Event event) {
 		
-		MyGraphDrawerDataSource dataSource = graphDrawer.getDataSource();
+		GDGraphDrawerDataSource dataSource = graphDrawer.getDataSource();
 		if(dataSource == null) {
 			return;
 		}
 		
-		MySize containerSize = dataSource.graphDrawerNodeMaxSize(graphDrawer);
+		Dimension2D containerSize = dataSource.graphDrawerNodeMaxSize(graphDrawer);
 		
 		if(containerSize == null) {
-			containerSize = MyGraphDrawerDefaultValues.graphDrawerNodeMaxSize;
+			containerSize = GDGraphDrawerDefaultValues.graphDrawerNodeMaxSize;
 		}
 		
 		MouseEvent mouseEvent = (MouseEvent) event;
@@ -49,30 +49,30 @@ public class MyNodeDragHandler implements MyNodeEventHandler{
 		}
 	}
 	
-	public MyNodeDragHandler(MyGraphicsNode graphicsNode, MyGraphDrawer graphDrawer) {
+	public GDNodeDragHandler(GDGraphicsNode graphicsNode, GDGraphDrawer graphDrawer) {
 		super();
 		this.graphicsNode = graphicsNode;
 		this.graphDrawer = graphDrawer;
 	}
 
 	@Override
-	public MyGraphicsNode getGraphicsNode() {
+	public GDGraphicsNode getGraphicsNode() {
 		return this.graphicsNode;
 	}
 
 	@Override
-	public void setGraphicsNode(MyGraphicsNode graphicsNode) {
+	public void setGraphicsNode(GDGraphicsNode graphicsNode) {
 		this.graphicsNode = graphicsNode;
 		
 	}
 
 	@Override
-	public MyGraphDrawer getMyGraphDrawer() {
+	public GDGraphDrawer getMyGraphDrawer() {
 		return this.graphDrawer;
 	}
 
 	@Override
-	public void setMyGraphDrawer(MyGraphDrawer graphDrawer) {
+	public void setMyGraphDrawer(GDGraphDrawer graphDrawer) {
 		this.graphDrawer = graphDrawer;
 	}
 

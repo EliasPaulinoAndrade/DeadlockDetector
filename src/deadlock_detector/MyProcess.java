@@ -4,18 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import graph.MyGraph;
-import graph.MyNodeValue;
+import graph.GPGraph;
+import graph.GPNodeValue;
 import javafx.application.Platform;
 
 /* it is responsible for trying to allocate new resources from time to time*/
 
-public class MyProcess implements MyNodeValue, Runnable{
+public class MyProcess implements GPNodeValue, Runnable{
 	private String processIdentifier;
 	private Integer restTime;
 	private Integer activeTime;
 	
-	private MyOpSystem opSystem;
 	private MyProcessNode<MyProcess> selfNode;
 	private List<ResourcesTime> usingResources;
 	
@@ -23,12 +22,11 @@ public class MyProcess implements MyNodeValue, Runnable{
 	
 	private Random random;
 	
-	public MyProcess(String processIdentifier, Integer restTime, Integer activeTime, MyOpSystem opSystem) {
+	public MyProcess(String processIdentifier, Integer restTime, Integer activeTime) {
 		super();
 		this.processIdentifier = processIdentifier;
 		this.restTime = restTime;
 		this.activeTime = activeTime;
-		this.opSystem = opSystem;
 		this.usingResources = new ArrayList<>();
 		this.lastClaimedTime = System.currentTimeMillis();
 		this.random = new Random();
@@ -43,7 +41,7 @@ public class MyProcess implements MyNodeValue, Runnable{
 		return false;
 	}
 	private MyResourceNode<MyResource> chooseAResource() {
-		List<MyResourceNode<MyResource>> resourcesNode = opSystem.getResources();
+		List<MyResourceNode<MyResource>> resourcesNode = MyOpSystem.shared().getResources();
 
 		List<MyResourceNode<MyResource>> unusedResourceNode = new ArrayList<>();
 		
@@ -76,7 +74,7 @@ public class MyProcess implements MyNodeValue, Runnable{
 			return ;
 		}
 		
-		MyGraph graph = opSystem.getGraph();
+		GPGraph graph = MyOpSystem.shared().getGraph();
 		MyResource randomResource = randomResourceNode.getValue();
 		
 		System.out.println(randomResource.getResourceIdentifier() + " ->  " + selfNode.getValue().getProcessIdentifier());
@@ -88,7 +86,7 @@ public class MyProcess implements MyNodeValue, Runnable{
 			
 			@Override
 			public void run() {
-				opSystem.getDrawer().addEdgeToNodeAt(selfNode.getId(), selfNode.numberOfEdges() - 1);
+				MyOpSystem.shared().getDrawer().addEdgeToNodeAt(selfNode.getId(), selfNode.numberOfEdges() - 1);
 				
 			}
 		});
@@ -107,7 +105,7 @@ public class MyProcess implements MyNodeValue, Runnable{
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				opSystem.getDrawer().removeEdgeFromNodeAt(selfNode.getId(), selfNode.numberOfEdges() - 1);
+				MyOpSystem.shared().getDrawer().removeEdgeFromNodeAt(selfNode.getId(), selfNode.numberOfEdges() - 1);
 				
 			}
 		});
@@ -117,7 +115,7 @@ public class MyProcess implements MyNodeValue, Runnable{
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				opSystem.getDrawer().addEdgeToNodeAt(randomResourceNode.getId(), randomResourceNode.numberOfEdges() - 1);
+				MyOpSystem.shared().getDrawer().addEdgeToNodeAt(randomResourceNode.getId(), randomResourceNode.numberOfEdges() - 1);
 				
 			}
 		});
@@ -135,7 +133,7 @@ public class MyProcess implements MyNodeValue, Runnable{
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
-						opSystem.getDrawer().removeEdgeFromNodeAt(resourcesTime.resource.getId(), edgeIndex);
+						MyOpSystem.shared().getDrawer().removeEdgeFromNodeAt(resourcesTime.resource.getId(), edgeIndex);
 						
 					}
 				});

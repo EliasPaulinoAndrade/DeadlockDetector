@@ -1,12 +1,12 @@
 package deadlock_detector;
 
-import graph.MyEdge;
-import graph.MyGraph;
-import graph.MyNode;
+import graph.GPEdge;
+import graph.GPGraph;
+import graph.GPNode;
 
-public class MyOpGraph extends MyGraph{
+public class MyOpGraph extends GPGraph{
 
-	public Boolean addEdgeToNode(MyEdge<?> edge, MyNode<?> node) {
+	public Boolean addEdgeToNode(GPEdge<?> edge, GPNode<?> node) {
 		if(edge instanceof MyOpEdge) {
 			return super.addEdgeToNode(edge, node); 
 		}

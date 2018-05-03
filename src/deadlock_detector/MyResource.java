@@ -1,11 +1,11 @@
 package deadlock_detector;
 
-import graph.MyNodeValue;
+import graph.GPNodeValue;
 import java.util.concurrent.Semaphore;
 
 /** it represents the resource item from the operational system*/
 
-public class MyResource implements MyNodeValue{
+public class MyResource implements GPNodeValue{
 	private String name;	
 	private String resourceIdentifier;
 	private Semaphore semaphore;

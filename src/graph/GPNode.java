@@ -4,12 +4,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 /*each node has a linked list for show it paths to other nodes*/
-public class MyNode<NodeElement extends MyNodeValue>{
+public class GPNode<NodeElement extends GPNodeValue>{
 	private Integer id;
 	private NodeElement value;
-	private List<MyEdge<?>> edges;
+	private List<GPEdge<?>> edges;
 	
-	public MyNode(NodeElement value) {
+	public GPNode(NodeElement value) {
 		this.value = value;
 		this.edges = new LinkedList<>();
 	}
@@ -30,15 +30,15 @@ public class MyNode<NodeElement extends MyNodeValue>{
 		this.value = value;
 	}
 	
-	protected Boolean addEdge(MyEdge<?> edge) {
+	protected Boolean addEdge(GPEdge<?> edge) {
 		return this.edges.add(edge);
 	}
 	
-	protected Boolean removeEdge(MyEdge<?> edge) {
+	protected Boolean removeEdge(GPEdge<?> edge) {
 		return this.edges.remove(edge);
 	}
 	
-	public MyEdge<?> getEdgeAt(Integer index) {
+	public GPEdge<?> getEdgeAt(Integer index) {
 		return this.edges.get(index);
 	}
 	
@@ -52,7 +52,7 @@ public class MyNode<NodeElement extends MyNodeValue>{
 		
 		nodeStringBuilder.append("[id: " + id);
 		nodeStringBuilder.append(", value: " + value.getStringValue() + "]");
-		for(MyEdge<?> edge : edges) {
+		for(GPEdge<?> edge : edges) {
 			nodeStringBuilder.append("  ->  ");
 			nodeStringBuilder.append(edge);
 		}

@@ -3,18 +3,37 @@ package deadlock_detector;
 import java.util.ArrayList;
 import java.util.List;
 
-import application.graphDrawer.MyGraphDrawer;
-import graph.MyGraph;
+import application.graphDrawer.GDGraphDrawer;
 
 /*it represents the operational system, it is resposible by detecting deadlocks with a cicle algorithm, and finish them.*/
+
 public class MyOpSystem implements Runnable{
 	private MyOpGraph graph;
 	private Integer restTime;
 	private List<MyResourceNode<MyResource>> resources;
 	private List<MyProcessNode<MyProcess>> processes;
-	private MyGraphDrawer drawer;
+	private GDGraphDrawer drawer;
 	
-	public MyOpSystem(Integer restTime, MyGraphDrawer drawer) {
+	private static MyOpSystem instance = null;
+	public static MyOpSystem setInstance(Integer restTime, GDGraphDrawer drawer) {
+		if(instance == null) {
+			instance = new MyOpSystem(restTime, drawer);
+		}
+		return instance;
+	}
+	
+	public static MyOpSystem setInstance(Integer restTime, List<MyResource> resources, GDGraphDrawer drawer) {
+		if(instance == null) {
+			instance = new MyOpSystem(restTime, resources, drawer);
+		}
+		return instance;
+	}
+	
+	public static MyOpSystem shared() {
+		return instance;
+	}
+	
+	private MyOpSystem(Integer restTime, GDGraphDrawer drawer) {
 		super();
 		this.graph = new MyOpGraph();
 		this.restTime = restTime;
@@ -22,8 +41,7 @@ public class MyOpSystem implements Runnable{
 		this.resources = new ArrayList<>();
 		this.processes = new ArrayList<>();
 	}
-	
-	public MyOpSystem(Integer restTime, List<MyResource> resources, MyGraphDrawer drawer) {
+	private MyOpSystem(Integer restTime, List<MyResource> resources, GDGraphDrawer drawer) {
 		super();
 		this.graph = new MyOpGraph();
 		this.restTime = restTime;
@@ -77,14 +95,12 @@ public class MyOpSystem implements Runnable{
 		this.processes = processes;
 	}
 
-	public MyGraphDrawer getDrawer() {
+	public GDGraphDrawer getDrawer() {
 		return drawer;
 	}
 
-	public void setDrawer(MyGraphDrawer drawer) {
+	public void setDrawer(GDGraphDrawer drawer) {
 		this.drawer = drawer;
 	}
-	
-	
 	
 }
