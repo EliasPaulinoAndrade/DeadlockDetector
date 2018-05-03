@@ -1,20 +1,20 @@
-package deadlock_detector;
+package application.deadlock_detector;
 
 import graph.GPEdge;
 import graph.GPNode;
 
 /*its a node subclass that restricts the destination edges's nodes, destination nodes can never be the same type that it
  * */
-public class MyProcessNode<NodeElement extends MyProcess> extends GPNode<NodeElement>{
+public class OPProcessNode<NodeElement extends OPProcess> extends GPNode<NodeElement>{
 
-	public MyProcessNode(NodeElement value) {
+	public OPProcessNode(NodeElement value) {
 		super(value);
 	}
 	
 	@Override
 	public Boolean addEdge(GPEdge<?> edge) {
 		GPNode<?> destinationNode = edge.getDestinationVertex();
-		if(destinationNode instanceof MyProcessNode<?>) {
+		if(destinationNode instanceof OPProcessNode<?>) {
 			return false;
 		}
 				

@@ -1,4 +1,4 @@
-package application.graphDrawer;
+package graphDrawer;
 
 
 /*its is a graphical representation of the edge*/

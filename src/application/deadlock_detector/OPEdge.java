@@ -1,15 +1,15 @@
-package deadlock_detector;
+package application.deadlock_detector;
 
 import graph.GPEdge;
 import graph.GPNode;
 
-public class MyOpEdge extends GPEdge<Void>{
+public class OPEdge extends GPEdge<Void>{
 	
-	public MyOpEdge(MyResourceNode<MyResource> destinationVertex) {
+	public OPEdge(OPResourceNode<OPResource> destinationVertex) {
 		super(destinationVertex, null);
 	}
 	
-	public MyOpEdge(MyProcessNode<MyProcess> destinationVertex) {
+	public OPEdge(OPProcessNode<OPProcess> destinationVertex) {
 		super(destinationVertex, null);
 	}
 	

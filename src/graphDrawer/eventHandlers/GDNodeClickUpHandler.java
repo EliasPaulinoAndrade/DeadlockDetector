@@ -1,7 +1,7 @@
-package application.graphDrawer.eventHandlers;
+package graphDrawer.eventHandlers;
 
-import application.graphDrawer.GDGraphDrawer;
-import application.graphDrawer.GDGraphicsNode;
+import graphDrawer.GDGraphDrawer;
+import graphDrawer.GDGraphicsNode;
 import javafx.event.Event;
 import javafx.scene.layout.Pane;
 

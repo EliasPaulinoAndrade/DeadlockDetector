@@ -1,4 +1,4 @@
-package deadlock_detector;
+package application.deadlock_detector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,19 +10,19 @@ import javafx.application.Platform;
 
 /* it is responsible for trying to allocate new resources from time to time*/
 
-public class MyProcess implements GPNodeValue, Runnable{
+public class OPProcess implements GPNodeValue, Runnable{
 	private String processIdentifier;
 	private Integer restTime;
 	private Integer activeTime;
 	
-	private MyProcessNode<MyProcess> selfNode;
+	private OPProcessNode<OPProcess> selfNode;
 	private List<ResourcesTime> usingResources;
 	
 	private Long lastClaimedTime;
 	
 	private Random random;
 	
-	public MyProcess(String processIdentifier, Integer restTime, Integer activeTime) {
+	public OPProcess(String processIdentifier, Integer restTime, Integer activeTime) {
 		super();
 		this.processIdentifier = processIdentifier;
 		this.restTime = restTime;
@@ -32,7 +32,7 @@ public class MyProcess implements GPNodeValue, Runnable{
 		this.random = new Random();
 	}
 	
-	private Boolean checkResourceHasBeenUsed(MyResourceNode<MyResource> resourceNode) {
+	private Boolean checkResourceHasBeenUsed(OPResourceNode<OPResource> resourceNode) {
 		for(ResourcesTime resourcesTime: this.usingResources) {
 			if(resourcesTime.resource == resourceNode) {
 				return true;
@@ -40,12 +40,12 @@ public class MyProcess implements GPNodeValue, Runnable{
 		}
 		return false;
 	}
-	private MyResourceNode<MyResource> chooseAResource() {
-		List<MyResourceNode<MyResource>> resourcesNode = MyOpSystem.shared().getResources();
+	private OPResourceNode<OPResource> chooseAResource() {
+		List<OPResourceNode<OPResource>> resourcesNode = OpSystem.shared().getResources();
 
-		List<MyResourceNode<MyResource>> unusedResourceNode = new ArrayList<>();
+		List<OPResourceNode<OPResource>> unusedResourceNode = new ArrayList<>();
 		
-		for(MyResourceNode<MyResource> resourceNode : resourcesNode) {
+		for(OPResourceNode<OPResource> resourceNode : resourcesNode) {
 			if(!checkResourceHasBeenUsed(resourceNode)) {
 				unusedResourceNode.add(resourceNode);
 			}
@@ -56,7 +56,7 @@ public class MyProcess implements GPNodeValue, Runnable{
 		}
 		
 		Integer randomResourceIndex = random.nextInt(unusedResourceNode.size());
-		MyResourceNode<MyResource> randomResourceNode = unusedResourceNode.get(randomResourceIndex);
+		OPResourceNode<OPResource> randomResourceNode = unusedResourceNode.get(randomResourceIndex);
 		
 		return randomResourceNode;
 	}
@@ -67,26 +67,26 @@ public class MyProcess implements GPNodeValue, Runnable{
 			return ;
 		}
 		
-		MyResourceNode<MyResource> randomResourceNode = chooseAResource();
+		OPResourceNode<OPResource> randomResourceNode = chooseAResource();
 		
 		if(randomResourceNode == null) {
 			this.lastClaimedTime = System.currentTimeMillis();
 			return ;
 		}
 		
-		GPGraph graph = MyOpSystem.shared().getGraph();
-		MyResource randomResource = randomResourceNode.getValue();
+		GPGraph graph = OpSystem.shared().getGraph();
+		OPResource randomResource = randomResourceNode.getValue();
 		
 		System.out.println(randomResource.getResourceIdentifier() + " ->  " + selfNode.getValue().getProcessIdentifier());
 		
-		MyOpEdge waitEdge = new MyOpEdge(randomResourceNode);
+		OPEdge waitEdge = new OPEdge(randomResourceNode);
 		graph.addEdgeToNode(waitEdge, selfNode);
 		
 		Platform.runLater(new Runnable() {
 			
 			@Override
 			public void run() {
-				MyOpSystem.shared().getDrawer().addEdgeToNodeAt(selfNode.getId(), selfNode.numberOfEdges() - 1);
+				OpSystem.shared().getDrawer().addEdgeToNodeAt(selfNode.getId(), selfNode.numberOfEdges() - 1);
 				
 			}
 		});
@@ -105,17 +105,17 @@ public class MyProcess implements GPNodeValue, Runnable{
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				MyOpSystem.shared().getDrawer().removeEdgeFromNodeAt(selfNode.getId(), selfNode.numberOfEdges() - 1);
+				OpSystem.shared().getDrawer().removeEdgeFromNodeAt(selfNode.getId(), selfNode.numberOfEdges() - 1);
 				
 			}
 		});
 		
-		MyOpEdge claimedEdge = new MyOpEdge(selfNode);
+		OPEdge claimedEdge = new OPEdge(selfNode);
 		graph.addEdgeToNode(claimedEdge, randomResourceNode);
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				MyOpSystem.shared().getDrawer().addEdgeToNodeAt(randomResourceNode.getId(), randomResourceNode.numberOfEdges() - 1);
+				OpSystem.shared().getDrawer().addEdgeToNodeAt(randomResourceNode.getId(), randomResourceNode.numberOfEdges() - 1);
 				
 			}
 		});
@@ -133,7 +133,7 @@ public class MyProcess implements GPNodeValue, Runnable{
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
-						MyOpSystem.shared().getDrawer().removeEdgeFromNodeAt(resourcesTime.resource.getId(), edgeIndex);
+						OpSystem.shared().getDrawer().removeEdgeFromNodeAt(resourcesTime.resource.getId(), edgeIndex);
 						
 					}
 				});
@@ -191,18 +191,18 @@ public class MyProcess implements GPNodeValue, Runnable{
 		this.activeTime = activeTime;
 	}
 
-	public MyProcessNode<MyProcess> getSelfNode() {
+	public OPProcessNode<OPProcess> getSelfNode() {
 		return selfNode;
 	}
 
-	public void setSelfNode(MyProcessNode<MyProcess> selfNode) {
+	public void setSelfNode(OPProcessNode<OPProcess> selfNode) {
 		this.selfNode = selfNode;
 	}
 	
 	static class ResourcesTime {
-		protected MyResourceNode<MyResource> resource;
+		protected OPResourceNode<OPResource> resource;
 		protected Long initialTime;
-		public ResourcesTime(MyResourceNode<MyResource> resource, Long initialTime) {
+		public ResourcesTime(OPResourceNode<OPResource> resource, Long initialTime) {
 			super();
 			this.resource = resource;
 			this.initialTime = initialTime;

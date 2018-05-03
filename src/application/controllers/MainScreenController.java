@@ -9,9 +9,8 @@ import java.util.ResourceBundle;
 
 import application.Main;
 import application.ScreenConstants;
-import deadlock_detector.MyResource;
+import application.deadlock_detector.OPResource;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -40,11 +39,11 @@ public class MainScreenController implements Initializable{
 	@FXML private AnchorPane resourcesChoiceBoxContainer;
 	
 	private ChoiceBox<String> resourcesChoiceBox;
-	private TableView<MyResource> resourcesTableView;
-	private TableColumn<MyResource, String> column;
-	private TableColumn<MyResource, String> column2;
+	private TableView<OPResource> resourcesTableView;
+	private TableColumn<OPResource, String> column;
+	private TableColumn<OPResource, String> column2;
 	
-	private List<MyResource> myResources;
+	private List<OPResource> myResources;
 	
 	public MainScreenController() {
 		myResources = new ArrayList<>();
@@ -55,7 +54,7 @@ public class MainScreenController implements Initializable{
 		/*when the save button is cliked, it creates a new resource and add it to the arraylist. If autoincrement is on:
 		 * it increments the textfield id number 
 		 * */
-		MyResource resource  = new MyResource(
+		OPResource resource  = new OPResource(
 				resourceName.getText(), 
 				resourceId.getText()
 				);
@@ -104,7 +103,7 @@ public class MainScreenController implements Initializable{
 			this.resourceId.setDisable(true);
 			Integer resourcesSize = this.myResources.size();
 			if(resourcesSize > 0) {
-				MyResource lastResource = this.myResources.get(resourcesSize - 1);
+				OPResource lastResource = this.myResources.get(resourcesSize - 1);
 				Integer nextResourceId = Integer.parseInt(lastResource.getResourceIdentifier()) + 1;
 				this.resourceId.setText(nextResourceId.toString());
 			}
@@ -134,7 +133,7 @@ public class MainScreenController implements Initializable{
 		column2 = new TableColumn<>("Name");
 		column2.setCellValueFactory(new PropertyValueFactory<>("name"));
 		
-		resourcesTableView = new TableView<MyResource>();
+		resourcesTableView = new TableView<OPResource>();
 		resourcesTableView.getColumns().add(column);
 		resourcesTableView.getColumns().add(column2);
 		resourcesTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);

@@ -1,9 +1,9 @@
-package application.graphDrawer;
+package graphDrawer;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import application.graphDrawer.eventHandlers.GDNodeEventHandler;
+import graphDrawer.eventHandlers.GDNodeEventHandler;
 import javafx.scene.Node;
 
 /*its a graphical representation of a node, it have a node and the node index in the graph.

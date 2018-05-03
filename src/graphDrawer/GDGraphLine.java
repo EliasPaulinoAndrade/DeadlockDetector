@@ -1,4 +1,4 @@
-package application.graphDrawer;
+package graphDrawer;
 
 
 import javafx.scene.Node;

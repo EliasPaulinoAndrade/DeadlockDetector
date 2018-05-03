@@ -1,13 +1,13 @@
-package deadlock_detector;
+package application.deadlock_detector;
 
 import graph.GPEdge;
 import graph.GPGraph;
 import graph.GPNode;
 
-public class MyOpGraph extends GPGraph{
+public class OpGraph extends GPGraph{
 
 	public Boolean addEdgeToNode(GPEdge<?> edge, GPNode<?> node) {
-		if(edge instanceof MyOpEdge) {
+		if(edge instanceof OPEdge) {
 			return super.addEdgeToNode(edge, node); 
 		}
 		return false;

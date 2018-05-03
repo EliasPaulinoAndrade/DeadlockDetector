@@ -1,4 +1,4 @@
-package application.graphDrawer;
+package graphDrawer;
 
 import javafx.geometry.Dimension2D;
 import javafx.scene.paint.Color;

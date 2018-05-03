@@ -1,14 +1,13 @@
 package application.datasources;
 
 import application.ScreenConstants;
-import application.graphDrawer.GDEdgeStyle;
-import application.graphDrawer.GDGraphDrawer;
-import application.graphDrawer.GDGraphDrawerDataSource;
-import deadlock_detector.MyResource;
-import deadlock_detector.MyResourceNode;
+import graphDrawer.GDEdgeStyle;
+import graphDrawer.GDGraphDrawer;
+import graphDrawer.GDGraphDrawerDataSource;
+import application.deadlock_detector.OPResource;
+import application.deadlock_detector.OPResourceNode;
 import graph.GPGraph;
 import graph.GPNode;
-import graph.GPNodeValue;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -28,11 +27,11 @@ import javafx.scene.text.Text;
 
 /*data source implementation for deadlock threads problem*/
 
-public class MyDeadlockGraphDataSource implements GDGraphDrawerDataSource{
+public class OPGraphDrawerDataSource implements GDGraphDrawerDataSource{
 	private GPGraph graph;
 	private Pane graphContainer;
 	
-	public MyDeadlockGraphDataSource(GPGraph graph, Pane graphContainer) {
+	public OPGraphDrawerDataSource(GPGraph graph, Pane graphContainer) {
 		super();
 		this.graph = graph;
 		this.graphContainer = graphContainer;
@@ -69,8 +68,8 @@ public class MyDeadlockGraphDataSource implements GDGraphDrawerDataSource{
 		textContainer.getChildren().add(nodeText);
 		
 		Pane nodeContainer = new StackPane();
-		if(node instanceof MyResourceNode<?>) {
-			MyResource resource = (MyResource) node.getValue();
+		if(node instanceof OPResourceNode<?>) {
+			OPResource resource = (OPResource) node.getValue();
 			String resourceImagePath = ScreenConstants.defaultResourcesNames.get(resource.getName());
 			if(resourceImagePath == null) {
 				Rectangle nodeRect = new Rectangle(60, 60);
@@ -154,7 +153,7 @@ public class MyDeadlockGraphDataSource implements GDGraphDrawerDataSource{
 			Integer edgeIndex) {
 		GPNode<?> destinationVertex =  this.graph.getNodeAt(nodeIndex).getEdgeAt(edgeIndex).getDestinationVertex();
 		
-		if(destinationVertex instanceof MyResourceNode<?>) {
+		if(destinationVertex instanceof OPResourceNode<?>) {
 			return GDEdgeStyle.MEDIUM_DOTTED;
 		}
 		return GDEdgeStyle.SOLID;

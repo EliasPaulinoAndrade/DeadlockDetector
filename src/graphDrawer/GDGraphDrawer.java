@@ -1,14 +1,13 @@
-package application.graphDrawer;
+package graphDrawer;
 
-import java.awt.Event;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Random;
 
-import application.graphDrawer.eventHandlers.GDNodeClickDownHandler;
-import application.graphDrawer.eventHandlers.GDNodeClickUpHandler;
-import application.graphDrawer.eventHandlers.GDNodeDragHandler;
+import graphDrawer.eventHandlers.GDNodeClickDownHandler;
+import graphDrawer.eventHandlers.GDNodeClickUpHandler;
+import graphDrawer.eventHandlers.GDNodeDragHandler;
 import javafx.event.EventHandler;
 import javafx.geometry.Dimension2D;
 import javafx.scene.Node;

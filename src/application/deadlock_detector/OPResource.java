@@ -1,16 +1,16 @@
-package deadlock_detector;
+package application.deadlock_detector;
 
 import graph.GPNodeValue;
 import java.util.concurrent.Semaphore;
 
 /** it represents the resource item from the operational system*/
 
-public class MyResource implements GPNodeValue{
+public class OPResource implements GPNodeValue{
 	private String name;	
 	private String resourceIdentifier;
 	private Semaphore semaphore;
 	
-	public MyResource(String name, String resourceIdentifier) {
+	public OPResource(String name, String resourceIdentifier) {
 		super();
 		this.name = name;
 		this.resourceIdentifier = resourceIdentifier;

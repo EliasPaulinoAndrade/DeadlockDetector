@@ -1,9 +1,9 @@
-package application.graphDrawer.eventHandlers;
+package graphDrawer.eventHandlers;
 
-import application.graphDrawer.GDGraphDrawer;
-import application.graphDrawer.GDGraphDrawerDataSource;
-import application.graphDrawer.GDGraphDrawerDefaultValues;
-import application.graphDrawer.GDGraphicsNode;
+import graphDrawer.GDGraphDrawer;
+import graphDrawer.GDGraphDrawerDataSource;
+import graphDrawer.GDGraphDrawerDefaultValues;
+import graphDrawer.GDGraphicsNode;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.scene.layout.Border;
