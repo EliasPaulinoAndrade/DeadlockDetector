@@ -4,7 +4,7 @@ import graph.GPEdge;
 import graph.GPGraph;
 import graph.GPNode;
 
-public class OpGraph extends GPGraph{
+public class OPGraph extends GPGraph{
 
 	public Boolean addEdgeToNode(GPEdge<?> edge, GPNode<?> node) {
 		if(edge instanceof OPEdge) {

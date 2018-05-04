@@ -7,43 +7,43 @@ import graphDrawer.GDGraphDrawer;
 
 /*it represents the operational system, it is resposible by detecting deadlocks with a cicle algorithm, and finish them.*/
 
-public class OpSystem implements Runnable{
-	private OpGraph graph;
+public class OPSystem implements Runnable{
+	private OPGraph graph;
 	private Integer restTime;
 	private List<OPResourceNode<OPResource>> resources;
 	private List<OPProcessNode<OPProcess>> processes;
 	private GDGraphDrawer drawer;
 	
-	private static OpSystem instance = null;
-	public static OpSystem setInstance(Integer restTime, GDGraphDrawer drawer) {
+	private static OPSystem instance = null;
+	public static OPSystem setInstance(Integer restTime, GDGraphDrawer drawer) {
 		if(instance == null) {
-			instance = new OpSystem(restTime, drawer);
+			instance = new OPSystem(restTime, drawer);
 		}
 		return instance;
 	}
 	
-	public static OpSystem setInstance(Integer restTime, List<OPResource> resources, GDGraphDrawer drawer) {
+	public static OPSystem setInstance(Integer restTime, List<OPResource> resources, GDGraphDrawer drawer) {
 		if(instance == null) {
-			instance = new OpSystem(restTime, resources, drawer);
+			instance = new OPSystem(restTime, resources, drawer);
 		}
 		return instance;
 	}
 	
-	public static OpSystem shared() {
+	public static OPSystem shared() {
 		return instance;
 	}
 	
-	private OpSystem(Integer restTime, GDGraphDrawer drawer) {
+	private OPSystem(Integer restTime, GDGraphDrawer drawer) {
 		super();
-		this.graph = new OpGraph();
+		this.graph = new OPGraph();
 		this.restTime = restTime;
 		this.drawer = drawer;
 		this.resources = new ArrayList<>();
 		this.processes = new ArrayList<>();
 	}
-	private OpSystem(Integer restTime, List<OPResource> resources, GDGraphDrawer drawer) {
+	private OPSystem(Integer restTime, List<OPResource> resources, GDGraphDrawer drawer) {
 		super();
-		this.graph = new OpGraph();
+		this.graph = new OPGraph();
 		this.restTime = restTime;
 		this.drawer = drawer;
 		this.processes = new ArrayList<>();
@@ -63,11 +63,11 @@ public class OpSystem implements Runnable{
 		
 	}
 	
-	public OpGraph getGraph() {
+	public OPGraph getGraph() {
 		return graph;
 	}
 
-	public void setGraph(OpGraph graph) {
+	public void setGraph(OPGraph graph) {
 		this.graph = graph;
 	}
 

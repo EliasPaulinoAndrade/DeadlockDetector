@@ -41,7 +41,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 		return false;
 	}
 	private OPResourceNode<OPResource> chooseAResource() {
-		List<OPResourceNode<OPResource>> resourcesNode = OpSystem.shared().getResources();
+		List<OPResourceNode<OPResource>> resourcesNode = OPSystem.shared().getResources();
 
 		List<OPResourceNode<OPResource>> unusedResourceNode = new ArrayList<>();
 		
@@ -74,7 +74,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 			return ;
 		}
 		
-		GPGraph graph = OpSystem.shared().getGraph();
+		GPGraph graph = OPSystem.shared().getGraph();
 		OPResource randomResource = randomResourceNode.getValue();
 		
 		System.out.println(randomResource.getResourceIdentifier() + " ->  " + selfNode.getValue().getProcessIdentifier());
@@ -86,7 +86,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 			
 			@Override
 			public void run() {
-				OpSystem.shared().getDrawer().addEdgeToNodeAt(selfNode.getId(), selfNode.numberOfEdges() - 1);
+				OPSystem.shared().getDrawer().addEdgeToNodeAt(selfNode.getId(), selfNode.numberOfEdges() - 1);
 				
 			}
 		});
@@ -105,7 +105,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				OpSystem.shared().getDrawer().removeEdgeFromNodeAt(selfNode.getId(), selfNode.numberOfEdges() - 1);
+				OPSystem.shared().getDrawer().removeEdgeFromNodeAt(selfNode.getId(), selfNode.numberOfEdges() - 1);
 				
 			}
 		});
@@ -115,7 +115,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				OpSystem.shared().getDrawer().addEdgeToNodeAt(randomResourceNode.getId(), randomResourceNode.numberOfEdges() - 1);
+				OPSystem.shared().getDrawer().addEdgeToNodeAt(randomResourceNode.getId(), randomResourceNode.numberOfEdges() - 1);
 				
 			}
 		});
@@ -133,7 +133,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
-						OpSystem.shared().getDrawer().removeEdgeFromNodeAt(resourcesTime.resource.getId(), edgeIndex);
+						OPSystem.shared().getDrawer().removeEdgeFromNodeAt(resourcesTime.resource.getId(), edgeIndex);
 						
 					}
 				});

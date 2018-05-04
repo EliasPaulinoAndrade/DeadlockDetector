@@ -7,10 +7,11 @@ import java.util.ResourceBundle;
 import application.datasources.OPGraphDrawerDataSource;
 import application.delegates.OPGraphDrawerDelegate;
 import graphDrawer.GDGraphDrawer;
-import application.deadlock_detector.OpSystem;
+import application.deadlock_detector.OPSystem;
 import application.deadlock_detector.OPProcess;
 import application.deadlock_detector.OPProcessNode;
 import application.deadlock_detector.OPResource;
+import application.deadlock_detector.OPResourceNode;
 import graph.GPGraph;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,6 +26,7 @@ import javafx.scene.layout.VBox;
 
 public class GraphScreenController implements Initializable {
 	@FXML private VBox processTableViewContainer; 
+	@FXML private VBox resourcesTableViewContainer;
 	@FXML private TextField processId;
 	@FXML private TextField processRestTime;
 	@FXML private TextField processActiveTime;
@@ -32,9 +34,14 @@ public class GraphScreenController implements Initializable {
 	@FXML private AnchorPane graphContainer;
 	
 	private TableView<OPProcess> processTableView;
-	private TableColumn<OPProcess, String> column;
-	private TableColumn<OPProcess, String> column2;
-	private TableColumn<OPProcess, String> column3;
+	private TableColumn<OPProcess, String> processColumn;
+	private TableColumn<OPProcess, String> processColumn2;
+	private TableColumn<OPProcess, String> processColumn3;
+	
+
+	private TableView<OPResource> resourceTableView;
+	private TableColumn<OPResource, String> resourceColumn;
+	private TableColumn<OPResource, String> resourceColumn2;
 	
 	private OPGraphDrawerDataSource graphDataSource;
 	private OPGraphDrawerDelegate graphDelegate;
@@ -45,14 +52,18 @@ public class GraphScreenController implements Initializable {
 		/*when the controller receives the data from the older screen it creates the graph with the data*/
 		drawer = new GDGraphDrawer();
 		
-		OpSystem.setInstance(opSystemRestTime, resources, drawer);
-		this.graphDataSource = new OPGraphDrawerDataSource(OpSystem.shared().getGraph(), this.graphContainer);
+		OPSystem.setInstance(opSystemRestTime, resources, drawer);
+		this.graphDataSource = new OPGraphDrawerDataSource(OPSystem.shared().getGraph(), this.graphContainer);
 		this.graphDelegate = new OPGraphDrawerDelegate();
 		
 		drawer.setDataSource(graphDataSource);
 		drawer.setDelegate(graphDelegate);
 		
 		graphContainer.getChildren().add(drawer);	
+		
+		for(OPResourceNode<OPResource> resourceNode : OPSystem.shared().getResources()) {
+			resourceTableView.getItems().add(resourceNode.getValue());
+		}
 
 		graphContainer.setBottomAnchor(drawer, 0.0);
 		graphContainer.setTopAnchor(drawer, 0.0);
@@ -67,27 +78,40 @@ public class GraphScreenController implements Initializable {
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		/*it creates the tableview*/
+		/*creates the tableview*/
 		
-		column = new TableColumn<>("ID");
-		column.setCellValueFactory(new PropertyValueFactory<>("processIdentifier"));
-		column.setMaxWidth(900);
+		processColumn = new TableColumn<>("ID");
+		processColumn.setCellValueFactory(new PropertyValueFactory<>("processIdentifier"));
+		processColumn.setMaxWidth(900);
 		
-		column2 = new TableColumn<>("Rest");
-		column2.setCellValueFactory(new PropertyValueFactory<>("restTime"));
+		processColumn2 = new TableColumn<>("Rest");
+		processColumn2.setCellValueFactory(new PropertyValueFactory<>("restTime"));
 		
-		column3 = new TableColumn<>("Active");
-		column3.setCellValueFactory(new PropertyValueFactory<>("activeTime"));
+		processColumn3 = new TableColumn<>("Active");
+		processColumn3.setCellValueFactory(new PropertyValueFactory<>("activeTime"));
 		
 		processTableView = new TableView<OPProcess>();
-		processTableView.getColumns().add(column);
-		processTableView.getColumns().add(column2);
-		processTableView.getColumns().add(column3);
+		processTableView.getColumns().add(processColumn);
+		processTableView.getColumns().add(processColumn2);
+		processTableView.getColumns().add(processColumn3);
 		processTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		processTableView.setMinHeight(250);
-		
+		processTableView.setEditable(true);
 		processTableViewContainer.getChildren().add(processTableView);
 		
+		resourceColumn = new TableColumn<>("ID");
+		resourceColumn.setCellValueFactory(new PropertyValueFactory<>("resourceIdentifier"));
+		resourceColumn.setMaxWidth(900);
+		
+		resourceColumn2 = new TableColumn<>("Name");
+		resourceColumn2.setCellValueFactory(new PropertyValueFactory<>("name"));
+		
+		resourceTableView = new TableView<>();
+		resourceTableView.getColumns().add(resourceColumn);
+		resourceTableView.getColumns().add(resourceColumn2);
+		resourceTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+		resourceTableView.setMinHeight(250);
+		resourcesTableViewContainer.getChildren().add(resourceTableView);
 	}
 	
 	@FXML 
@@ -102,9 +126,9 @@ public class GraphScreenController implements Initializable {
 		OPProcessNode<OPProcess> processNode = new OPProcessNode<OPProcess>(process);
 		process.setSelfNode(processNode);
 		
-		GPGraph graph = OpSystem.shared().getGraph();
+		GPGraph graph = OPSystem.shared().getGraph();
 		
-		OpSystem.shared().getProcesses().add(processNode);
+		OPSystem.shared().getProcesses().add(processNode);
 		processTableView.getItems().add(process);	
 		graph.addNode(processNode);
 		drawer.addNodeAt(graph.numberOfNodes() - 1);
@@ -119,15 +143,23 @@ public class GraphScreenController implements Initializable {
 	}
 	
 	@FXML 
+	private void handleDeleteButtonAction(ActionEvent event) {
+		/*when the save button is clicked a new process is created and added to the graph */
+		
+		System.out.println("DELETE");
+	
+	}
+	
+	@FXML 
 	private void handleCheckBoxAction(ActionEvent event) {	
 		/*same autoincrementlogic*/
 		
 		if(autoIdProcess.isSelected()) {
 			this.processId.setEditable(false);
 			this.processId.setDisable(true);
-			Integer processSize = OpSystem.shared().getProcesses().size();
+			Integer processSize = OPSystem.shared().getProcesses().size();
 			if(processSize > 0) {
-				OPProcess lastProcess = OpSystem.shared().getProcesses().get(processSize - 1).getValue();
+				OPProcess lastProcess = OPSystem.shared().getProcesses().get(processSize - 1).getValue();
 				Integer nextResourceId = Integer.parseInt(lastProcess.getProcessIdentifier()) + 1;
 				this.processId.setText(nextResourceId.toString());
 			}

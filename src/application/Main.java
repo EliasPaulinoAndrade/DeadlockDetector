@@ -14,10 +14,7 @@ public class Main extends Application{
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-
 			Pane root = setup();
-			
-			
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 	        
