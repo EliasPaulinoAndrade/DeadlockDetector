@@ -1,4 +1,4 @@
-package graphDrawer;
+package graph_drawer;
 
 
 /*its is a graphical representation of the edge*/

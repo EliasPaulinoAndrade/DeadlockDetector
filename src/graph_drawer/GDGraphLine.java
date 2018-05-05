@@ -1,4 +1,4 @@
-package graphDrawer;
+package graph_drawer;
 
 
 import javafx.scene.Node;

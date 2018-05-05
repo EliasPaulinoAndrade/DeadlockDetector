@@ -1,4 +1,4 @@
-package graphDrawer;
+package graph_drawer;
 
 public enum GDEdgeStyle {
 	MEDIUM_DOTTED(5d),

@@ -1,8 +1,8 @@
-package graphDrawer.eventHandlers;
+package graph_drawer.event_handlers;
 
 
-import graphDrawer.GDGraphDrawer;
-import graphDrawer.GDGraphicsNode;
+import graph_drawer.GDGraphDrawer;
+import graph_drawer.GDGraphicsNode;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 

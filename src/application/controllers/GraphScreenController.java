@@ -9,10 +9,10 @@ import application.op_graph.delegates.OPSystemDelegate;
 import application.op_graph.OPProcess;
 import application.op_graph.OPResource;
 import application.op_graph.OPSystem;
-import graphDrawer.GDGraphDrawer;
-import graphDrawer.GDGraphDrawerDelegate;
 import graph.GPGraph;
 import graph.GPNode;
+import graph_drawer.GDGraphDrawer;
+import graph_drawer.GDGraphDrawerDelegate;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -211,8 +211,7 @@ public class GraphScreenController implements Initializable, OPSystemDelegate, G
 
 	@Override
 	public void graphDrawerNodeClicked(GDGraphDrawer graphDrawer) {
-		System.out.println("node click");
+		
 		
 	}
-
 }

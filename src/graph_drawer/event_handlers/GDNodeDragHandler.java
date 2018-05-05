@@ -1,9 +1,9 @@
-package graphDrawer.eventHandlers;
+package graph_drawer.event_handlers;
 
-import graphDrawer.GDGraphDrawer;
-import graphDrawer.GDGraphDrawerDataSource;
-import graphDrawer.GDGraphDrawerDefaultValues;
-import graphDrawer.GDGraphicsNode;
+import graph_drawer.GDGraphDrawer;
+import graph_drawer.GDGraphDrawerDataSource;
+import graph_drawer.GDGraphDrawerDefaultValues;
+import graph_drawer.GDGraphicsNode;
 import javafx.event.Event;
 import javafx.geometry.Dimension2D;
 import javafx.scene.Node;

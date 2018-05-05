@@ -1,13 +1,13 @@
-package graphDrawer;
+package graph_drawer;
 
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Random;
 
-import graphDrawer.eventHandlers.GDNodeClickDownHandler;
-import graphDrawer.eventHandlers.GDNodeClickUpHandler;
-import graphDrawer.eventHandlers.GDNodeDragHandler;
+import graph_drawer.event_handlers.GDNodeClickDownHandler;
+import graph_drawer.event_handlers.GDNodeClickUpHandler;
+import graph_drawer.event_handlers.GDNodeDragHandler;
 import javafx.event.EventHandler;
 import javafx.geometry.Dimension2D;
 import javafx.scene.Node;
