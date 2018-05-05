@@ -1,7 +1,6 @@
 package application.op_graph;
 
 import graph.GPEdge;
-import graph.GPNode;
 
 public class OPEdge extends GPEdge<Void>{
 	

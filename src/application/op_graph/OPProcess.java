@@ -1,14 +1,11 @@
 package application.op_graph;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 import application.delegate_definitions.OPProcessDelegate;
-import graph.GPGraph;
 import graph.GPNodeValue;
-import javafx.application.Platform;
 
 /* it is responsible for trying to allocate new resources from time to time*/
 
@@ -78,31 +75,16 @@ public class OPProcess implements GPNodeValue, Runnable{
 			return ;
 		}
 		
-		GPGraph graph = OPSystem.shared().getGraph();
-		OPResource randomResource = randomResourceNode.getValue();
-		
-		OPEdge waitEdge = new OPEdge(randomResourceNode);
-		graph.addEdgeToNode(waitEdge, selfNode);
-		
-		Integer lastEdge2 = selfNode.numberOfEdges() - 1;
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					OPSystem.shared().getDrawer().addEdgeToNodeAt(selfNode.getId(), lastEdge2);
-				}catch (Exception e) {
-					System.out.println("deu ruim");
-				}
-			}
-		});
-		
 
-		System.out.println(OPSystem.shared().getGraph());
-		System.out.println("-----------------------------");
+		OPResource randomResource = randomResourceNode.getValue();
+
+		if(delegate != null) {
+			delegate.processWillClaimResource(selfNode, randomResourceNode);		
+		}
 		
 		randomResource.claim();
-		this.lastClaimedTime = System.currentTimeMillis();
 		
+		this.lastClaimedTime = System.currentTimeMillis();
 		this.usingResources.add(
 				new ResourcesTime(
 						randomResourceNode, 
@@ -110,32 +92,9 @@ public class OPProcess implements GPNodeValue, Runnable{
 						)
 				);
 		
-		Integer lastNode = selfNode.numberOfEdges() - 1;
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					OPSystem.shared().getDrawer().removeEdgeFromNodeAt(selfNode.getId(), lastNode);
-				}catch (Exception e) {
-					// TODO: handle exception
-				}
-			}
-		});
-		
-		graph.removeEdgeFromNode(selfNode.getEdgeAt(selfNode.numberOfEdges() - 1), selfNode);
-		
-		OPEdge claimedEdge = new OPEdge(selfNode);
-		graph.addEdgeToNode(claimedEdge, randomResourceNode);
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				OPSystem.shared().getDrawer().addEdgeToNodeAt(randomResourceNode.getId(), randomResourceNode.numberOfEdges() - 1);
-				
-			}
-		});
-		
-		System.out.println(OPSystem.shared().getGraph());
-		System.out.println("-----------------------------");
+		if(delegate != null) {
+			delegate.processDidAcquireResource(selfNode, randomResourceNode);
+		}
 	}
 
 	private void tryToFreeResources(Long currentTime) {
@@ -144,18 +103,11 @@ public class OPProcess implements GPNodeValue, Runnable{
 		List<ResourcesTime> finishedResources = new ArrayList<>();
 		for(ResourcesTime resourcesTime : this.usingResources) {
 			if(currentTime - resourcesTime.initialTime > this.activeTime) {
-
-				System.out.println("will free");
-				Integer edgeIndex = resourcesTime.resource.numberOfEdges() - 1;
 				
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						OPSystem.shared().getDrawer().removeEdgeFromNodeAt(resourcesTime.resource.getId(), edgeIndex);
-						
-					}
-				});
-				OPSystem.shared().getGraph().removeEdgeFromNode(resourcesTime.resource.getEdgeAt(resourcesTime.resource.numberOfEdges() - 1), resourcesTime.resource);
+				if(delegate != null) {
+					delegate.processNeedReleaseResource(selfNode, resourcesTime.resource);
+				}
+				
 				resourcesTime.resource.getValue().release();
 				finishedResources.add(resourcesTime);
 			}

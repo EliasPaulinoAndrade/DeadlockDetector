@@ -5,8 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import application.delegate_definitions.OPProcessDelegate;
-import graphDrawer.GDGraphDrawer;
-import javafx.application.Platform;
+import application.delegate_definitions.OPSystemDelegate;
 
 /*it represents the operational system, it is resposible by detecting deadlocks with a cicle algorithm, and finish them.*/
 
@@ -15,19 +14,20 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	private Integer restTime;
 	private List<OPResourceNode<OPResource>> resources;
 	private List<OPProcessNode<OPProcess>> processes;
-	private GDGraphDrawer drawer;
+	
+	private OPSystemDelegate delegate;
 	
 	private static OPSystem instance = null;
-	public static OPSystem setInstance(Integer restTime, GDGraphDrawer drawer) {
+	public static OPSystem setInstance(Integer restTime) {
 		if(instance == null) {
-			instance = new OPSystem(restTime, drawer);
+			instance = new OPSystem(restTime);
 		}
 		return instance;
 	}
 	
-	public static OPSystem setInstance(Integer restTime, List<OPResource> resources, GDGraphDrawer drawer) {
+	public static OPSystem setInstance(Integer restTime, List<OPResource> resources) {
 		if(instance == null) {
-			instance = new OPSystem(restTime, resources, drawer);
+			instance = new OPSystem(restTime, resources);
 		}
 		return instance;
 	}
@@ -36,20 +36,18 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		return instance;
 	}
 	
-	private OPSystem(Integer restTime, GDGraphDrawer drawer) {
+	private OPSystem(Integer restTime) {
 		super();
 		this.graph = new OPGraph();
 		this.restTime = restTime;
-		this.drawer = drawer;
 		this.resources = new ArrayList<>();
 		this.processes = new ArrayList<>();	
 	}
 	
-	private OPSystem(Integer restTime, List<OPResource> resources, GDGraphDrawer drawer) {
+	private OPSystem(Integer restTime, List<OPResource> resources) {
 		super();
 		this.graph = new OPGraph();
 		this.restTime = restTime;
-		this.drawer = drawer;
 		this.processes = new ArrayList<>();
 		this.resources = new ArrayList<>();
 		
@@ -73,62 +71,48 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		OPEdge waitEdge = new OPEdge(resourceNode);
 		graph.addEdgeToNode(waitEdge, processNode);
 		
-		Platform.runLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				try {
-					drawer.addEdgeToNodeAt(processNode.getId(), processNode.numberOfEdges() - 1);
-				}catch (Exception e) {
-					System.out.println("deu ruim");
-				}
-				
-			}
-		});
+		if(delegate != null) {
+			delegate.systemAppendedEdgeToNode(this, processNode);
+		}
+		
+		System.out.println(OPSystem.shared().getGraph());
+		System.out.println("-----------------------------");
 	}
 
 	@Override
 	public void processDidAcquireResource(OPProcessNode<OPProcess> processNode,
 			OPResourceNode<OPResource> resourceNode) {
 	
-		Integer lastEdgeIndex = processNode.numberOfEdges() - 1;
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					drawer.removeEdgeFromNodeAt(processNode.getId(), lastEdgeIndex);
-				}catch (Exception e) {
-					System.out.println("deu ruim");
-				}
-			}
-		});	
+		if(delegate != null) {
+			delegate.systemWillRemoveLastEdgeFromNode(this, processNode);
+		}
+		
+		graph.removeEdgeFromNode(processNode.getEdgeAt(processNode.numberOfEdges() - 1), processNode);
 		
 		OPEdge claimedEdge = new OPEdge(processNode);
 		graph.addEdgeToNode(claimedEdge, resourceNode);
 		
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				drawer.addEdgeToNodeAt(resourceNode.getId(), resourceNode.numberOfEdges() - 1);
-				
-			}
-		});
+		if(delegate != null) {
+			delegate.systemAppendedEdgeToNode(this, resourceNode);
+		}
+		
+		System.out.println(OPSystem.shared().getGraph());
+		System.out.println("-----------------------------");
 	}
 
 	@Override
 	public void processNeedReleaseResource(OPProcessNode<OPProcess> processNode,
 			OPResourceNode<OPResource> resourceNode) {
 	
-		Integer edgeIndex = resourceNode.numberOfEdges() - 1;
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				OPSystem.shared().getDrawer().removeEdgeFromNodeAt(resourceNode.getId(), edgeIndex);
-				
-			}
-		});
+		if(delegate != null) {
+			delegate.systemWillRemoveLastEdgeFromNode(this, resourceNode);
+		}
 		
 		graph.removeEdgeFromNode(resourceNode.getEdgeAt(resourceNode.numberOfEdges() - 1), resourceNode);
+		
+
+		System.out.println(OPSystem.shared().getGraph());
+		System.out.println("-----------------------------");
 	}
 	
 	public void addProcess(OPProcess opProcess) {
@@ -166,15 +150,15 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	public void setRestTime(Integer restTime) {
 		this.restTime = restTime;
 	}
-
-	public GDGraphDrawer getDrawer() {
-		return drawer;
-	}
-
-	public void setDrawer(GDGraphDrawer drawer) {
-		this.drawer = drawer;
-	}
 	
+	public OPSystemDelegate getDelegate() {
+		return delegate;
+	}
+
+	public void setDelegate(OPSystemDelegate delegate) {
+		this.delegate = delegate;
+	}
+
 	public Iterable<OPProcessNode<OPProcess>> processesIterable = new Iterable<OPProcessNode<OPProcess>>() {
 		
 		@Override

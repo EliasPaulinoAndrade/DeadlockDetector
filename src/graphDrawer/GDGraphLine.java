@@ -6,7 +6,6 @@ import javafx.scene.layout.BorderPane;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.StrokeType;
 
 /*draw a graph edge a arrow*/
 
