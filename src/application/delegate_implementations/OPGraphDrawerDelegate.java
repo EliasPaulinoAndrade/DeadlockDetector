@@ -1,4 +1,4 @@
-package application.delegates;
+package application.delegate_implementations;
 
 import graphDrawer.GDGraphDrawer;
 import graphDrawer.GDGraphDrawerDelegate;

@@ -1,11 +1,11 @@
-package application.datasources;
+package application.datasource_implementations;
 
 import application.ScreenConstants;
+import application.op_graph.OPResource;
+import application.op_graph.OPResourceNode;
 import graphDrawer.GDEdgeStyle;
 import graphDrawer.GDGraphDrawer;
 import graphDrawer.GDGraphDrawerDataSource;
-import application.deadlock_detector.OPResource;
-import application.deadlock_detector.OPResourceNode;
 import graph.GPGraph;
 import graph.GPNode;
 import javafx.geometry.Dimension2D;

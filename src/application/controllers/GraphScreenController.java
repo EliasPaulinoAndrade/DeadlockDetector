@@ -4,14 +4,14 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import application.datasources.OPGraphDrawerDataSource;
-import application.delegates.OPGraphDrawerDelegate;
+import application.datasource_implementations.OPGraphDrawerDataSource;
+import application.delegate_implementations.OPGraphDrawerDelegate;
+import application.op_graph.OPProcess;
+import application.op_graph.OPProcessNode;
+import application.op_graph.OPResource;
+import application.op_graph.OPResourceNode;
+import application.op_graph.OPSystem;
 import graphDrawer.GDGraphDrawer;
-import application.deadlock_detector.OPSystem;
-import application.deadlock_detector.OPProcess;
-import application.deadlock_detector.OPProcessNode;
-import application.deadlock_detector.OPResource;
-import application.deadlock_detector.OPResourceNode;
 import graph.GPGraph;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -61,18 +61,20 @@ public class GraphScreenController implements Initializable {
 		
 		graphContainer.getChildren().add(drawer);	
 		
-		for(OPResourceNode<OPResource> resourceNode : OPSystem.shared().getResources()) {
-			resourceTableView.getItems().add(resourceNode.getValue());
+		for(OPResource resource : resources) {
+			resourceTableView.getItems().add(resource);
 		}
 
 		graphContainer.setBottomAnchor(drawer, 0.0);
 		graphContainer.setTopAnchor(drawer, 0.0);
 		graphContainer.setLeftAnchor(drawer, 0.0);
 		graphContainer.setRightAnchor(drawer, 0.0);	
+		
+
+		System.out.println(OPSystem.shared().getGraph());
 	}
 	
 	public void viewDidLoad() {
-		System.out.println(drawer.getLayoutBounds());	
 		drawer.drawGraph();
 	}
 	
@@ -123,14 +125,12 @@ public class GraphScreenController implements Initializable {
 				Integer.parseInt(processRestTime.getText()), 
 				Integer.parseInt(processActiveTime.getText())
 				);
-		OPProcessNode<OPProcess> processNode = new OPProcessNode<OPProcess>(process);
-		process.setSelfNode(processNode);
+		
+		OPSystem.shared().addProcess(process);
 		
 		GPGraph graph = OPSystem.shared().getGraph();
 		
-		OPSystem.shared().getProcesses().add(processNode);
 		processTableView.getItems().add(process);	
-		graph.addNode(processNode);
 		drawer.addNodeAt(graph.numberOfNodes() - 1);
 		
 		new Thread(process).start();
@@ -157,9 +157,9 @@ public class GraphScreenController implements Initializable {
 		if(autoIdProcess.isSelected()) {
 			this.processId.setEditable(false);
 			this.processId.setDisable(true);
-			Integer processSize = OPSystem.shared().getProcesses().size();
+			Integer processSize = OPSystem.shared().numberOfProcesses();
 			if(processSize > 0) {
-				OPProcess lastProcess = OPSystem.shared().getProcesses().get(processSize - 1).getValue();
+				OPProcess lastProcess = OPSystem.shared().getProcess(processSize - 1).getValue();
 				Integer nextResourceId = Integer.parseInt(lastProcess.getProcessIdentifier()) + 1;
 				this.processId.setText(nextResourceId.toString());
 			}

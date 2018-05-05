@@ -1,4 +1,4 @@
-package application.deadlock_detector;
+package application.op_graph;
 
 import graph.GPNodeValue;
 import java.util.concurrent.Semaphore;
@@ -44,7 +44,7 @@ public class OPResource implements GPNodeValue{
 
 	@Override
 	public String getStringValue() {
-		return resourceIdentifier;
+		return name;
 	}
 	
 }

@@ -1,4 +1,4 @@
-package application.deadlock_detector;
+package application.op_graph;
 
 import graph.GPEdge;
 import graph.GPNode;

@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
 
 import application.Main;
 import application.ScreenConstants;
-import application.deadlock_detector.OPResource;
+import application.op_graph.OPResource;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
