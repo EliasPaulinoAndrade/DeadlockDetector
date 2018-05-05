@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import application.delegate_definitions.OPProcessDelegate;
-import application.delegate_definitions.OPSystemDelegate;
+import application.op_graph.delegates.OPProcessDelegate;
+import application.op_graph.delegates.OPSystemDelegate;
 
 /*it represents the operational system, it is resposible by detecting deadlocks with a cicle algorithm, and finish them.*/
 
@@ -25,13 +25,6 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		return instance;
 	}
 	
-	public static OPSystem setInstance(Integer restTime, List<OPResource> resources) {
-		if(instance == null) {
-			instance = new OPSystem(restTime, resources);
-		}
-		return instance;
-	}
-	
 	public static OPSystem shared() {
 		return instance;
 	}
@@ -44,21 +37,6 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		this.processes = new ArrayList<>();	
 	}
 	
-	private OPSystem(Integer restTime, List<OPResource> resources) {
-		super();
-		this.graph = new OPGraph();
-		this.restTime = restTime;
-		this.processes = new ArrayList<>();
-		this.resources = new ArrayList<>();
-		
-		OPResourceNode<OPResource> resourceNode;
-		for (OPResource resource: resources) {
-			resourceNode = new OPResourceNode<OPResource>(resource);
-			this.resources.add(resourceNode);
-			graph.addNode(resourceNode);
-		}	
-	}
-	
 	@Override
 	public void run() {
 		
@@ -67,6 +45,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	@Override
 	public void processWillClaimResource(OPProcessNode<OPProcess> processNode,
 			OPResourceNode<OPResource> resourceNode) {
+		/*its called when is needed to draw a edge form the process to the resource*/
 		
 		OPEdge waitEdge = new OPEdge(resourceNode);
 		graph.addEdgeToNode(waitEdge, processNode);
@@ -82,6 +61,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	@Override
 	public void processDidAcquireResource(OPProcessNode<OPProcess> processNode,
 			OPResourceNode<OPResource> resourceNode) {
+		/*its called when is needed to draw a edge form the resource to the process*/
 	
 		if(delegate != null) {
 			delegate.systemWillRemoveLastEdgeFromNode(this, processNode);
@@ -103,6 +83,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	@Override
 	public void processNeedReleaseResource(OPProcessNode<OPProcess> processNode,
 			OPResourceNode<OPResource> resourceNode) {
+		/*when the resource is released, the edges are deleted*/
 	
 		if(delegate != null) {
 			delegate.systemWillRemoveLastEdgeFromNode(this, resourceNode);
@@ -116,6 +97,8 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	}
 	
 	public void addProcess(OPProcess opProcess) {
+		/*add a process to the graph and array, and set its delegate*/
+		
 		OPProcessNode<OPProcess> processNode = new OPProcessNode<OPProcess>(opProcess);
 		opProcess.setSelfNode(processNode);
 		
@@ -126,13 +109,34 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		
 		new Thread(this).start();
 	}
+	
+	public void addResource(OPResource opResource) {
+		OPResourceNode<OPResource> resourceNode = new OPResourceNode<OPResource>(opResource);
+		
+		resources.add(resourceNode);
+		graph.addNode(resourceNode);
+	}
 
+	public void addAllResources(List<OPResource> resources) {
+		for (OPResource resource: resources) {
+			addResource(resource);
+		}
+	}
+	
 	public Integer numberOfProcesses() {
 		return this.processes.size();
 	}
 	
+	public Integer numberOfResources() {
+		return this.resources.size();
+	}
+	
 	public OPProcessNode<OPProcess> getProcess(Integer index) {
 		return this.processes.get(index);
+	}
+	
+	public OPResourceNode<OPResource> getResource(Integer index) {
+		return this.resources.get(index);
 	}
 	
 	public OPGraph getGraph() {

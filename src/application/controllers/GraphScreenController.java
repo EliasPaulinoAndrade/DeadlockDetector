@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import application.datasource_implementations.OPGraphDrawerDataSource;
-import application.delegate_definitions.OPSystemDelegate;
-import application.delegate_implementations.OPGraphDrawerDelegate;
+import application.op_graph.delegates.OPSystemDelegate;
 import application.op_graph.OPProcess;
 import application.op_graph.OPResource;
 import application.op_graph.OPSystem;
 import graphDrawer.GDGraphDrawer;
+import graphDrawer.GDGraphDrawerDelegate;
 import graph.GPGraph;
 import graph.GPNode;
 import javafx.application.Platform;
@@ -25,7 +25,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
-public class GraphScreenController implements Initializable, OPSystemDelegate{
+public class GraphScreenController implements Initializable, OPSystemDelegate, GDGraphDrawerDelegate{
 	@FXML private VBox processTableViewContainer; 
 	@FXML private VBox resourcesTableViewContainer;
 	@FXML private TextField processId;
@@ -44,7 +44,6 @@ public class GraphScreenController implements Initializable, OPSystemDelegate{
 	private TableColumn<OPResource, String> resourceColumn2;
 	
 	private OPGraphDrawerDataSource graphDataSource;
-	private OPGraphDrawerDelegate graphDelegate;
 	
 	private GDGraphDrawer drawer;
 	
@@ -52,14 +51,14 @@ public class GraphScreenController implements Initializable, OPSystemDelegate{
 		/*when the controller receives the data from the older screen it creates the graph with the data*/
 		drawer = new GDGraphDrawer();
 		
-		OPSystem.setInstance(opSystemRestTime, resources);
+		OPSystem.setInstance(opSystemRestTime);
+		OPSystem.shared().addAllResources(resources);
 		OPSystem.shared().setDelegate(this);
 		
 		this.graphDataSource = new OPGraphDrawerDataSource(OPSystem.shared().getGraph(), this.graphContainer);
-		this.graphDelegate = new OPGraphDrawerDelegate();
 		
 		drawer.setDataSource(graphDataSource);
-		drawer.setDelegate(graphDelegate);
+		drawer.setDelegate(this);
 		
 		graphContainer.getChildren().add(drawer);	
 		
@@ -67,10 +66,10 @@ public class GraphScreenController implements Initializable, OPSystemDelegate{
 			resourceTableView.getItems().add(resource);
 		}
 
-		graphContainer.setBottomAnchor(drawer, 0.0);
-		graphContainer.setTopAnchor(drawer, 0.0);
-		graphContainer.setLeftAnchor(drawer, 0.0);
-		graphContainer.setRightAnchor(drawer, 0.0);	
+		AnchorPane.setBottomAnchor(drawer, 0.0);
+		AnchorPane.setTopAnchor(drawer, 0.0);
+		AnchorPane.setLeftAnchor(drawer, 0.0);
+		AnchorPane.setRightAnchor(drawer, 0.0);	
 		
 	}
 	
@@ -176,6 +175,8 @@ public class GraphScreenController implements Initializable, OPSystemDelegate{
 
 	@Override
 	public void systemAppendedEdgeToNode(OPSystem system, GPNode<?> gpNode) {
+		/*append a edge to the node*/
+		
 		Integer lastEdge = gpNode.numberOfEdges() - 1;
 		Platform.runLater(new Runnable() {
 			
@@ -193,6 +194,7 @@ public class GraphScreenController implements Initializable, OPSystemDelegate{
 
 	@Override
 	public void systemWillRemoveLastEdgeFromNode(OPSystem system, GPNode<?> gpNode) {
+		/*remove the last edge from the node*/
 		
 		Integer lastEdgeIndex = gpNode.numberOfEdges() - 1;
 		Platform.runLater(new Runnable() {
@@ -204,6 +206,12 @@ public class GraphScreenController implements Initializable, OPSystemDelegate{
 				}
 			}
 		});	
+		
+	}
+
+	@Override
+	public void graphDrawerNodeClicked(GDGraphDrawer graphDrawer) {
+		System.out.println("node click");
 		
 	}
 

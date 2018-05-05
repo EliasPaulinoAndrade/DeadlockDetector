@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import application.delegate_definitions.OPProcessDelegate;
+import application.op_graph.delegates.OPProcessDelegate;
 import graph.GPNodeValue;
 
 /* it is responsible for trying to allocate new resources from time to time*/
@@ -30,6 +30,23 @@ public class OPProcess implements GPNodeValue, Runnable{
 		this.usingResources = new ArrayList<>();
 		this.lastClaimedTime = System.currentTimeMillis();
 		this.random = new Random();
+	}
+	
+	@Override
+	public void run() {
+		Long currentTime;
+		while(true) {
+			try {
+				currentTime = System.currentTimeMillis();
+				tryToFreeResources(currentTime);
+				
+				tryToClaimRandomResource(currentTime);
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
 	
 	private Boolean checkResourceHasBeenUsed(OPResourceNode<OPResource> resourceNode) {
@@ -66,16 +83,12 @@ public class OPProcess implements GPNodeValue, Runnable{
 			return ;
 		}
 		
-		OPResourceNode<OPResource> randomResourceNode = chooseAResource();
-		
-		System.out.println(this.usingResources.size());
-		
+		OPResourceNode<OPResource> randomResourceNode = chooseAResource();	
 		if(randomResourceNode == null) {
 			this.lastClaimedTime = System.currentTimeMillis();
 			return ;
 		}
 		
-
 		OPResource randomResource = randomResourceNode.getValue();
 
 		if(delegate != null) {
@@ -113,24 +126,6 @@ public class OPProcess implements GPNodeValue, Runnable{
 			}
 		}
 		this.usingResources.removeAll(finishedResources);
-	}
-	
-	
-	@Override
-	public void run() {
-		Long currentTime;
-		while(true) {
-			try {
-				currentTime = System.currentTimeMillis();
-				tryToFreeResources(currentTime);
-				
-				tryToClaimRandomResource(currentTime);
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		
 	}
 	
 	@Override
