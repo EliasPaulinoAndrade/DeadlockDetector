@@ -3,6 +3,7 @@ package application.op_graph;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import application.op_graph.delegates.OPProcessDelegate;
 import application.op_graph.delegates.OPSystemDelegate;
@@ -12,6 +13,7 @@ import application.op_graph.delegates.OPSystemDelegate;
 public class OPSystem implements Runnable, OPProcessDelegate{
 	private OPGraph graph;
 	private Integer restTime;
+	private Semaphore semaphoreGraph = new Semaphore(1);
 	private List<OPResourceNode<OPResource>> resources;
 	private List<OPProcessNode<OPProcess>> processes;
 	
@@ -47,6 +49,13 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 			OPResourceNode<OPResource> resourceNode) {
 		/*its called when is needed to draw a edge form the process to the resource*/
 		
+		try {
+			semaphoreGraph.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		OPEdge waitEdge = new OPEdge(resourceNode);
 		graph.addEdgeToNode(waitEdge, processNode);
 		
@@ -56,12 +65,21 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		
 		System.out.println(OPSystem.shared().getGraph());
 		System.out.println("-----------------------------");
+		
+		semaphoreGraph.release();
 	}
 
 	@Override
 	public void processDidAcquireResource(OPProcessNode<OPProcess> processNode,
 			OPResourceNode<OPResource> resourceNode) {
 		/*its called when is needed to draw a edge form the resource to the process*/
+		
+		try {
+			semaphoreGraph.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	
 		if(delegate != null) {
 			delegate.systemWillRemoveLastEdgeFromNode(this, processNode);
@@ -78,12 +96,21 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		
 		System.out.println(OPSystem.shared().getGraph());
 		System.out.println("-----------------------------");
+		
+		semaphoreGraph.release();
 	}
 
 	@Override
 	public void processNeedReleaseResource(OPProcessNode<OPProcess> processNode,
 			OPResourceNode<OPResource> resourceNode) {
 		/*when the resource is released, the edges are deleted*/
+		
+		try {
+			semaphoreGraph.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	
 		if(delegate != null) {
 			delegate.systemWillRemoveLastEdgeFromNode(this, resourceNode);
@@ -94,16 +121,27 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 
 		System.out.println(OPSystem.shared().getGraph());
 		System.out.println("-----------------------------");
+		
+		semaphoreGraph.release();
 	}
 	
 	public void addProcess(OPProcess opProcess) {
 		/*add a process to the graph and array, and set its delegate*/
-		
+
+		try {
+			semaphoreGraph.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
 		OPProcessNode<OPProcess> processNode = new OPProcessNode<OPProcess>(opProcess);
 		opProcess.setSelfNode(processNode);
 		
 		processes.add(processNode);
 		graph.addNode(processNode);
+		
+		semaphoreGraph.release();
 		
 		opProcess.setDelegate(this);
 		
