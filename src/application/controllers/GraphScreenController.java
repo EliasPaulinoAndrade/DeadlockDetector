@@ -38,6 +38,7 @@ public class GraphScreenController implements Initializable, OPSystemDelegate, G
 	private TableColumn<OPProcess, String> processColumn;
 	private TableColumn<OPProcess, String> processColumn2;
 	private TableColumn<OPProcess, String> processColumn3;
+	private TableColumn<OPProcess, String> processColumn4;
 	
 	private TableView<OPResource> resourceTableView;
 	private TableColumn<OPResource, String> resourceColumn;
@@ -91,10 +92,14 @@ public class GraphScreenController implements Initializable, OPSystemDelegate, G
 		processColumn3 = new TableColumn<>("Active");
 		processColumn3.setCellValueFactory(new PropertyValueFactory<>("activeTime"));
 		
+		processColumn4 = new TableColumn<>("Status");
+		processColumn4.setCellValueFactory(new PropertyValueFactory<>("status"));
+		
 		processTableView = new TableView<OPProcess>();
 		processTableView.getColumns().add(processColumn);
 		processTableView.getColumns().add(processColumn2);
 		processTableView.getColumns().add(processColumn3);
+		processTableView.getColumns().add(processColumn4);
 		processTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		processTableView.setMinHeight(250);
 		processTableView.setEditable(true);
@@ -144,6 +149,14 @@ public class GraphScreenController implements Initializable, OPSystemDelegate, G
 	@FXML 
 	private void handleDeleteButtonAction(ActionEvent event) {
 		/*when the save button is clicked a new process is created and added to the graph */
+		
+		OPProcess selectedNode = processTableView.getSelectionModel().getSelectedItem();
+		
+		if(selectedNode == null)
+			return;
+		
+		OPSystem.shared().setProcessToDie(selectedNode);
+		
 		
 		System.out.println("DELETE");
 	

@@ -13,9 +13,11 @@ public class OPProcess implements GPNodeValue, Runnable{
 	private String processIdentifier;
 	private Integer restTime;
 	private Integer activeTime;
+	private Integer willDie;
 
 	private OPProcessNode<OPProcess> selfNode;
 	private List<ResourcesTime> usingResources;
+	private OPResource claimedResource;
 	
 	private Long lastClaimedTime;
 	private Random random;
@@ -27,15 +29,17 @@ public class OPProcess implements GPNodeValue, Runnable{
 		this.processIdentifier = processIdentifier;
 		this.restTime = restTime;
 		this.activeTime = activeTime;
+		this.willDie = 0;
 		this.usingResources = new ArrayList<>();
 		this.lastClaimedTime = System.currentTimeMillis();
 		this.random = new Random();
+		
 	}
 	
 	@Override
 	public void run() {
 		Long currentTime;
-		while(true) {
+		while(this.getWillDie() == 0) {
 			try {
 				currentTime = System.currentTimeMillis();
 				tryToFreeResources(currentTime);
@@ -47,6 +51,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 			}
 		}
 		
+		freeResourcesBeforeDie();
 	}
 	
 	private Boolean checkResourceHasBeenUsed(OPResourceNode<OPResource> resourceNode) {
@@ -95,7 +100,15 @@ public class OPProcess implements GPNodeValue, Runnable{
 			delegate.processWillClaimResource(selfNode, randomResourceNode);		
 		}
 		
+		this.setClaimedResource(randomResource);
+		
 		randomResource.claim();
+		
+		if(this.getWillDie() == 1)
+		{
+			randomResource.release();
+			this.setClaimedResource(null);
+		}
 		
 		this.lastClaimedTime = System.currentTimeMillis();
 		this.usingResources.add(
@@ -128,6 +141,23 @@ public class OPProcess implements GPNodeValue, Runnable{
 		this.usingResources.removeAll(finishedResources);
 	}
 	
+	private void freeResourcesBeforeDie()
+	{
+		if(this.getUsingResources().size() != 0)
+		{
+			for(ResourcesTime resource : this.getUsingResources())
+			{
+				if(delegate != null) {
+					delegate.processNeedReleaseResource(selfNode, resource.resource);
+				}
+				resource.resource.getValue().release();
+			}
+			
+			this.getUsingResources().clear();
+		}
+		
+	}
+	
 	@Override
 	public String getStringValue() {
 		return processIdentifier.toString();
@@ -155,6 +185,22 @@ public class OPProcess implements GPNodeValue, Runnable{
 
 	public void setActiveTime(Integer activeTime) {
 		this.activeTime = activeTime;
+	}
+
+	public Integer getWillDie() {
+		return willDie;
+	}
+
+	public void setWillDie(Integer willDie) {
+		this.willDie = willDie;
+	}
+
+	public OPResource getClaimedResource() {
+		return claimedResource;
+	}
+
+	public void setClaimedResource(OPResource claimedResource) {
+		this.claimedResource = claimedResource;
 	}
 
 	public OPProcessNode<OPProcess> getSelfNode() {

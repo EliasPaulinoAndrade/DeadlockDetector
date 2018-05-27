@@ -18,7 +18,6 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	private Semaphore semaphoreGraph = new Semaphore(1);
 	private List<OPResourceNode<OPResource>> resources;
 	private List<OPProcessNode<OPProcess>> processes;
-	private List<GPNode<?>> nodes;
 	private Stack<GPNode<?>> nodesStack;
 	
 	private OPSystemDelegate delegate;
@@ -41,7 +40,6 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		this.restTime = restTime;
 		this.resources = new ArrayList<>();
 		this.processes = new ArrayList<>();	
-		this.nodes = new ArrayList<>();
 		this.nodesStack = new Stack<>();
 	}
 	
@@ -49,9 +47,9 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	public void run() {
 		while(true)
 		{
-			for(int i = 0; i < this.nodes.size(); i++)
+			for(int i = 0; i < this.graph.numberOfNodes(); i++)
 			{
-				checkForDeadLocks(this.nodes.get(i));
+				checkForDeadLocks(this.graph.getNodeAt(i));
 				this.nodesStack.clear();
 			}
 			
@@ -61,9 +59,18 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 			}
 			System.out.println();
 			
-			for(int i = 0; i < this.nodes.size(); i++)
+			for(int i = 0; i < this.resources.size(); i++)
 			{
-				this.nodes.get(i).setStatus(0);
+				System.out.print(this.resources.get(i).getStatus() + " - ");
+			}
+			System.out.println();
+			
+			removeProcesses();
+			
+			for(int i = 0; i < this.graph.numberOfNodes(); i++)
+			{
+//				if(this.graph.getNodeAt(i).getStatus() == 3);
+					this.graph.getNodeAt(i).setStatus(0);
 			}
 			
 			try {
@@ -96,7 +103,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 				{
 					node.setStatus(1);
 					this.nodesStack.clear();
-					this.nodesStack.push(node);
+//					this.nodesStack.push(node);
 					return 1;
 				}
 				else
@@ -108,7 +115,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 							if(node.getStatus() == 0)
 							{
 								node.setStatus(1);
-								this.nodesStack.push(node);
+//								this.nodesStack.push(node);
 								return 1;
 							}
 							else
@@ -217,6 +224,26 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		semaphoreGraph.release();
 	}
 	
+	@Override
+	public void processWasSetToDie(OPProcessNode<OPProcess> processNode,
+			OPResourceNode<OPResource> resourceNode)
+	{
+		try {
+			semaphoreGraph.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(delegate != null) {
+			delegate.systemWillRemoveLastEdgeFromNode(this, processNode);
+		}
+		
+		graph.removeEdgeFromNode(resourceNode.getEdgeAt(processNode.numberOfEdges() - 1), processNode);
+		
+		semaphoreGraph.release();
+	}
+	
 	public void addProcess(OPProcess opProcess) {
 		/*add a process to the graph and array, and set its delegate*/
 
@@ -226,7 +253,6 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		opProcess.setSelfNode(processNode);
 		
 		processes.add(processNode);
-		nodes.add(processNode);
 		try {
 			semaphoreGraph.acquire();
 		} catch (InterruptedException e) {
@@ -242,11 +268,34 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		new Thread(this).start();
 	}
 	
+	public void setProcessToDie(OPProcess opProcess)
+	{
+		opProcess.setWillDie(1);
+		opProcess.getClaimedResource().release();
+	}
+	
+	public void removeProcesses()
+	{
+		List<OPProcessNode<OPProcess>> deadProcesses = new ArrayList<>();
+		for(int i = 0; i < this.processes.size(); i++)
+		{
+			if(this.processes.get(i).getValue().getWillDie() == 1)
+			{
+				deadProcesses.add(this.processes.get(i));
+			}
+		}
+		
+		processes.removeAll(deadProcesses);
+		for(int i = 0; i < deadProcesses.size(); i++)
+		{
+			graph.removeNode(deadProcesses.get(i));
+		}
+	}
+	
 	public void addResource(OPResource opResource) {
 		OPResourceNode<OPResource> resourceNode = new OPResourceNode<OPResource>(opResource);
 		
 		resources.add(resourceNode);
-		nodes.add(resourceNode);
 		graph.addNode(resourceNode);
 	}
 

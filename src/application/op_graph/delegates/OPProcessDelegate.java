@@ -10,4 +10,5 @@ public interface OPProcessDelegate {
 	void processWillClaimResource(OPProcessNode<OPProcess> processNode, OPResourceNode<OPResource> resourceNode);
 	void processDidAcquireResource(OPProcessNode<OPProcess> processNode, OPResourceNode<OPResource> resourceNode);
 	void processNeedReleaseResource(OPProcessNode<OPProcess> processNode, OPResourceNode<OPResource> resourceNode);
+	void processWasSetToDie(OPProcessNode<OPProcess> processNode, OPResourceNode<OPResource> resourceNode);
 }
