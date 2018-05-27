@@ -13,7 +13,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 	private String processIdentifier;
 	private Integer restTime;
 	private Integer activeTime;
-	
+
 	private OPProcessNode<OPProcess> selfNode;
 	private List<ResourcesTime> usingResources;
 	
@@ -173,6 +173,10 @@ public class OPProcess implements GPNodeValue, Runnable{
 		this.delegate = delegate;
 	}
 
+	public List<ResourcesTime> getUsingResources() {
+		return usingResources;
+	}
+	
 	static class ResourcesTime {
 		protected OPResourceNode<OPResource> resource;
 		protected Long initialTime;

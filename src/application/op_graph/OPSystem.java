@@ -3,10 +3,12 @@ package application.op_graph;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.Semaphore;
 
 import application.op_graph.delegates.OPProcessDelegate;
 import application.op_graph.delegates.OPSystemDelegate;
+import graph.GPNode;
 
 /*it represents the operational system, it is resposible by detecting deadlocks with a cicle algorithm, and finish them.*/
 
@@ -16,6 +18,8 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	private Semaphore semaphoreGraph = new Semaphore(1);
 	private List<OPResourceNode<OPResource>> resources;
 	private List<OPProcessNode<OPProcess>> processes;
+	private List<GPNode<?>> nodes;
+	private Stack<GPNode<?>> nodesStack;
 	
 	private OPSystemDelegate delegate;
 	
@@ -37,11 +41,99 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		this.restTime = restTime;
 		this.resources = new ArrayList<>();
 		this.processes = new ArrayList<>();	
+		this.nodes = new ArrayList<>();
+		this.nodesStack = new Stack<>();
 	}
 	
 	@Override
 	public void run() {
+		while(true)
+		{
+			for(int i = 0; i < this.nodes.size(); i++)
+			{
+				checkForDeadLocks(this.nodes.get(i));
+				this.nodesStack.clear();
+			}
+			
+			for(int i = 0; i < this.processes.size(); i++)
+			{
+				System.out.print(this.processes.get(i).getStatus() + " - ");
+			}
+			System.out.println();
+			
+			for(int i = 0; i < this.nodes.size(); i++)
+			{
+				this.nodes.get(i).setStatus(0);
+			}
+			
+			try {
+				Thread.sleep(restTime);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private int checkForDeadLocks(GPNode<?> node)
+	{
+		/*check for cycles to identify deadlocks
+		 * nodes status:
+		 * 0 - unchecked
+		 * 1 - the node is on a deadlock
+		 * 2 - the is blocked but isn't on the deadlock cycle
+		 * 3 - the is not blocked*/
+		if(node.getStatus() == 0)
+		{
+			if(node.numberOfEdges() == 0)
+			{
+				node.setStatus(3);
+				return 3;
+			}
+			else
+			{
+				if(this.nodesStack.contains(node))
+				{
+					node.setStatus(1);
+					this.nodesStack.clear();
+					this.nodesStack.push(node);
+					return 1;
+				}
+				else
+				{
+					this.nodesStack.push(node);
+					switch (checkForDeadLocks(node.getEdgeAt(0).getDestinationVertex()))
+					{
+						case 1:
+							if(node.getStatus() == 0)
+							{
+								node.setStatus(1);
+								this.nodesStack.push(node);
+								return 1;
+							}
+							else
+								return 2;
+							
+						case 2:
+							node.setStatus(2);
+							return 2;
+						
+						case 3:
+							node.setStatus(3);
+							return 3;
+					}
+				}
+			}
+		}
+		else
+		{
+			if(node.getStatus() != 3)
+				return 2;
+			else
+				return 3;
+		}
 		
+		return 0;
 	}
 	
 	@Override
@@ -128,17 +220,19 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	public void addProcess(OPProcess opProcess) {
 		/*add a process to the graph and array, and set its delegate*/
 
+		
+	
+		OPProcessNode<OPProcess> processNode = new OPProcessNode<OPProcess>(opProcess);
+		opProcess.setSelfNode(processNode);
+		
+		processes.add(processNode);
+		nodes.add(processNode);
 		try {
 			semaphoreGraph.acquire();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
-		OPProcessNode<OPProcess> processNode = new OPProcessNode<OPProcess>(opProcess);
-		opProcess.setSelfNode(processNode);
-		
-		processes.add(processNode);
 		graph.addNode(processNode);
 		
 		semaphoreGraph.release();
@@ -152,6 +246,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		OPResourceNode<OPResource> resourceNode = new OPResourceNode<OPResource>(opResource);
 		
 		resources.add(resourceNode);
+		nodes.add(resourceNode);
 		graph.addNode(resourceNode);
 	}
 

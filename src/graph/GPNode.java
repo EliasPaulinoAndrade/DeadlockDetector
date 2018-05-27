@@ -8,10 +8,12 @@ public class GPNode<NodeElement extends GPNodeValue>{
 	private Integer id;
 	private NodeElement value;
 	private List<GPEdge<?>> edges;
+	private Integer status;
 	
 	public GPNode(NodeElement value) {
 		this.value = value;
 		this.edges = new LinkedList<>();
+		this.status = 0;
 	}
 	
 	public Integer getId() {
@@ -30,6 +32,14 @@ public class GPNode<NodeElement extends GPNodeValue>{
 		this.value = value;
 	}
 	
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
 	protected Boolean addEdge(GPEdge<?> edge) {
 		return this.edges.add(edge);
 	}
