@@ -47,11 +47,14 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	public void run() {
 		while(true)
 		{
-			for(int i = 0; i < this.graph.numberOfNodes(); i++)
-			{
-				checkForDeadLocks(this.graph.getNodeAt(i));
-				this.nodesStack.clear();
+			try {
+				semaphoreGraph.acquire();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
+			
+			callDeadLockDectector();
 			
 			for(int i = 0; i < this.processes.size(); i++)
 			{
@@ -67,11 +70,9 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 			
 			removeProcesses();
 			
-			for(int i = 0; i < this.graph.numberOfNodes(); i++)
-			{
-//				if(this.graph.getNodeAt(i).getStatus() == 3);
-					this.graph.getNodeAt(i).setStatus(0);
-			}
+			clearNodes();
+			
+			semaphoreGraph.release();
 			
 			try {
 				Thread.sleep(restTime);
@@ -79,6 +80,15 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	private void callDeadLockDectector()
+	{
+		for(int i = 0; i < this.graph.numberOfNodes(); i++)
+		{
+			checkForDeadLocks(this.graph.getNodeAt(i));
+			this.nodesStack.clear();
 		}
 	}
 	
@@ -141,6 +151,15 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		}
 		
 		return 0;
+	}
+	
+	
+	private void clearNodes()
+	{
+		for(int i = 0; i < this.graph.numberOfNodes(); i++)
+		{
+				this.graph.getNodeAt(i).setStatus(0);
+		}
 	}
 	
 	@Override
@@ -225,8 +244,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	}
 	
 	@Override
-	public void processWasSetToDie(OPProcessNode<OPProcess> processNode,
-			OPResourceNode<OPResource> resourceNode)
+	public void processWasSetToDie(OPProcessNode<OPProcess> processNode)
 	{
 		try {
 			semaphoreGraph.acquire();
@@ -239,7 +257,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 			delegate.systemWillRemoveLastEdgeFromNode(this, processNode);
 		}
 		
-		graph.removeEdgeFromNode(resourceNode.getEdgeAt(processNode.numberOfEdges() - 1), processNode);
+		graph.removeEdgeFromNode(processNode.getEdgeAt(processNode.numberOfEdges() - 1), processNode);
 		
 		semaphoreGraph.release();
 	}
@@ -271,7 +289,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	public void setProcessToDie(OPProcess opProcess)
 	{
 		opProcess.setWillDie(1);
-		opProcess.getClaimedResource().release();
+		opProcess.freeResourcesBeforeDie();
 	}
 	
 	public void removeProcesses()
@@ -344,6 +362,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	public void setDelegate(OPSystemDelegate delegate) {
 		this.delegate = delegate;
 	}
+	
 
 	public Iterable<OPProcessNode<OPProcess>> processesIterable = new Iterable<OPProcessNode<OPProcess>>() {
 		

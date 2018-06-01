@@ -45,13 +45,11 @@ public class OPProcess implements GPNodeValue, Runnable{
 				tryToFreeResources(currentTime);
 				
 				tryToClaimRandomResource(currentTime);
-				Thread.sleep(1000);
+				Thread.sleep(restTime);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		
-		freeResourcesBeforeDie();
 	}
 	
 	private Boolean checkResourceHasBeenUsed(OPResourceNode<OPResource> resourceNode) {
@@ -107,20 +105,22 @@ public class OPProcess implements GPNodeValue, Runnable{
 		if(this.getWillDie() == 1)
 		{
 			randomResource.release();
-			this.setClaimedResource(null);
 		}
-		
-		this.lastClaimedTime = System.currentTimeMillis();
-		this.usingResources.add(
-				new ResourcesTime(
-						randomResourceNode, 
-						this.lastClaimedTime
-						)
-				);
-		
-		if(delegate != null) {
-			delegate.processDidAcquireResource(selfNode, randomResourceNode);
+		else
+		{
+			this.lastClaimedTime = System.currentTimeMillis();
+			this.usingResources.add(
+					new ResourcesTime(
+							randomResourceNode, 
+							this.lastClaimedTime
+							)
+					);
+			
+			if(delegate != null) {
+				delegate.processDidAcquireResource(selfNode, randomResourceNode);
+			}
 		}
+		this.setClaimedResource(null);
 	}
 
 	private void tryToFreeResources(Long currentTime) {
@@ -141,21 +141,25 @@ public class OPProcess implements GPNodeValue, Runnable{
 		this.usingResources.removeAll(finishedResources);
 	}
 	
-	private void freeResourcesBeforeDie()
+	public void freeResourcesBeforeDie()
 	{
-		if(this.getUsingResources().size() != 0)
+		for(ResourcesTime resource : this.getUsingResources())
 		{
-			for(ResourcesTime resource : this.getUsingResources())
-			{
-				if(delegate != null) {
-					delegate.processNeedReleaseResource(selfNode, resource.resource);
-				}
-				resource.resource.getValue().release();
+			if(delegate != null) {
+				delegate.processNeedReleaseResource(selfNode, resource.resource);
 			}
-			
-			this.getUsingResources().clear();
+			resource.resource.getValue().release();
 		}
+		this.getUsingResources().clear();
 		
+
+		if(getClaimedResource() != null)
+		{
+			if(delegate != null)
+			{
+				delegate.processWasSetToDie(selfNode);
+			}
+		}
 	}
 	
 	@Override
