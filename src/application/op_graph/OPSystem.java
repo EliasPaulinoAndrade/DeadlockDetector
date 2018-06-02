@@ -68,8 +68,6 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 			}
 			System.out.println();
 			
-			removeProcesses();
-			
 			clearNodes();
 			
 			semaphoreGraph.release();
@@ -85,9 +83,9 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	
 	private void callDeadLockDectector()
 	{
-		for(int i = 0; i < this.graph.numberOfNodes(); i++)
+		for(GPNode<?> node : graph.getVertices())
 		{
-			checkForDeadLocks(this.graph.getNodeAt(i));
+			checkForDeadLocks(node);
 			this.nodesStack.clear();
 		}
 	}
@@ -156,9 +154,9 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	
 	private void clearNodes()
 	{
-		for(int i = 0; i < this.graph.numberOfNodes(); i++)
+		for(GPNode<?> node : graph.getVertices())
 		{
-				this.graph.getNodeAt(i).setStatus(0);
+			node.setStatus(0);
 		}
 	}
 	
@@ -265,25 +263,25 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	public void addProcess(OPProcess opProcess) {
 		/*add a process to the graph and array, and set its delegate*/
 
-		
-	
-		OPProcessNode<OPProcess> processNode = new OPProcessNode<OPProcess>(opProcess);
-		opProcess.setSelfNode(processNode);
-		
-		processes.add(processNode);
+
 		try {
 			semaphoreGraph.acquire();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		graph.addNode(processNode);
+	
+		OPProcessNode<OPProcess> processNode = new OPProcessNode<OPProcess>(opProcess);
+		opProcess.setSelfNode(processNode);
 		
-		semaphoreGraph.release();
+		processes.add(processNode);
+		graph.addNode(processNode);
 		
 		opProcess.setDelegate(this);
 		
 		new Thread(this).start();
+		
+		semaphoreGraph.release();
 	}
 	
 	public void setProcessToDie(OPProcess opProcess)
@@ -292,22 +290,18 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		opProcess.freeResourcesBeforeDie();
 	}
 	
-	public void removeProcesses()
+	public void removeProcess(OPProcess process)
 	{
-		List<OPProcessNode<OPProcess>> deadProcesses = new ArrayList<>();
-		for(int i = 0; i < this.processes.size(); i++)
-		{
-			if(this.processes.get(i).getValue().getWillDie() == 1)
-			{
-				deadProcesses.add(this.processes.get(i));
-			}
+		try {
+			semaphoreGraph.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		processes.remove(process.getSelfNode());
+		graph.removeNode(process.getSelfNode());
 		
-		processes.removeAll(deadProcesses);
-		for(int i = 0; i < deadProcesses.size(); i++)
-		{
-			graph.removeNode(deadProcesses.get(i));
-		}
+		semaphoreGraph.release();
 	}
 	
 	public void addResource(OPResource opResource) {

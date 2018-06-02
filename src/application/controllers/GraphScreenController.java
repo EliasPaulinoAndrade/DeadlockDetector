@@ -134,14 +134,17 @@ public class GraphScreenController implements Initializable, OPSystemDelegate, G
 		
 		GPGraph graph = OPSystem.shared().getGraph();
 		
-		processTableView.getItems().add(process);	
-		drawer.addNodeAt(graph.numberOfNodes() - 1);
+		processTableView.getItems().add(process);
+		
+
+//		drawer.addNodeAt(graph.numberOfNodes() - 1);
+		drawer.addNodeAt(graph.getVertices().get(graph.numberOfNodes() - 1).getId());
 		
 		new Thread(process).start();
 		
 		if(this.autoIdProcess.isSelected()) {
-			Integer nextResourceId = Integer.parseInt(this.processId.getText()) + 1;
-			this.processId.setText(nextResourceId.toString());
+			Integer nextProcessId = Integer.parseInt(this.processId.getText()) + 1;
+			this.processId.setText(nextProcessId.toString());
 		}
 	
 	}
@@ -156,6 +159,8 @@ public class GraphScreenController implements Initializable, OPSystemDelegate, G
 			return;
 		
 		OPSystem.shared().setProcessToDie(selectedProcess);
+		
+		OPSystem.shared().removeProcess(selectedProcess);
 		
 		processTableView.getItems().remove(selectedProcess);
 		

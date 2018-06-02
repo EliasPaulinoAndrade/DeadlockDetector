@@ -7,9 +7,11 @@ import java.util.List;
 /*graph's class, it has a linked list for do the 'adjacency list' implementation */
 public class GPGraph{
 	private List<GPNode<?>> vertices;
+	private static int counter;
 
 	public GPGraph() {
 		vertices = new LinkedList<>();
+		counter = 0;
 	}
 	
 	public Boolean addEdgeToNode(GPEdge<?> edge, GPNode<?> node) {
@@ -25,7 +27,7 @@ public class GPGraph{
 	}
 
 	public Boolean addNode(GPNode<?> node) {
-		node.setId(this.vertices.size());
+		node.setId(count());
 		return this.vertices.add(node);
 	}
 	
@@ -38,7 +40,28 @@ public class GPGraph{
 	}
 	
 	public GPNode<?> getNodeAt(Integer index){
-		return vertices.get(index);
+		for(GPNode<?> node : vertices)
+		{
+			if(node.getId() == index)
+			{
+				return node;
+			}
+		}
+		
+		return null;
+	}
+	
+	private Integer count()
+	{
+		return counter++;
+	}
+
+	public List<GPNode<?>> getVertices() {
+		return vertices;
+	}
+
+	public void setVertices(List<GPNode<?>> vertices) {
+		this.vertices = vertices;
 	}
 
 	@Override
