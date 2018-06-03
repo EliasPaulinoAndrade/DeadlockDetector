@@ -114,7 +114,7 @@ public class GDGraphDrawer extends Region{
 		
 		Pane containerNode = new StackPane();
 		GDGraphicsNode graphicsNode = new GDGraphicsNode(containerNode, index);
-
+		
 		containerNode.setMinHeight(containerSize.getHeight());
 		containerNode.setMinWidth(containerSize.getWidth());
 
@@ -126,6 +126,15 @@ public class GDGraphDrawer extends Region{
 		
 		this.addNodeMoveListeners(graphicsNode);
 		this.addNodeDelegateListeners(node);
+	}
+	
+	public void removeNodeAt(Integer index)
+	{
+		GDGraphicsNode graphicsNode = this.nodes.get(index);
+		
+		this.getChildren().remove(graphicsNode.getNode());
+		
+//		this.nodes.remove(index);
 	}
 	
 	private void addNodeDelegateListeners(Node node) {

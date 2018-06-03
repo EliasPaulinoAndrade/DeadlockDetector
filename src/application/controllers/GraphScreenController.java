@@ -162,6 +162,8 @@ public class GraphScreenController implements Initializable, OPSystemDelegate, G
 		
 		OPSystem.shared().removeProcess(selectedProcess);
 		
+		drawer.removeNodeAt(selectedProcess.getSelfNode().getId());
+		
 		processTableView.getItems().remove(selectedProcess);
 		
 		System.out.println("DELETE");
