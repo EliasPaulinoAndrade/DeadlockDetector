@@ -143,6 +143,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 	
 	public void freeResourcesBeforeDie()
 	{
+		/* free the resources this process is in possess and warn OS if it is waiting a resource to be free*/
 		for(ResourcesTime resource : this.getUsingResources())
 		{
 			if(delegate != null) {

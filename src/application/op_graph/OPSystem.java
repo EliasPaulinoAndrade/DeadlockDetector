@@ -83,6 +83,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	
 	private void callDeadLockDectector()
 	{
+		/*call function to check deadlocks for each node*/
 		for(GPNode<?> node : graph.getVertices())
 		{
 			checkForDeadLocks(node);
@@ -154,6 +155,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	
 	private void clearNodes()
 	{
+		/*clear nodes status after checking for deadlocks*/
 		for(GPNode<?> node : graph.getVertices())
 		{
 			node.setStatus(0);
@@ -244,6 +246,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	@Override
 	public void processWasSetToDie(OPProcessNode<OPProcess> processNode)
 	{
+		/* remove edge from the node that was set to die*/
 		try {
 			semaphoreGraph.acquire();
 		} catch (InterruptedException e) {
@@ -286,12 +289,14 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	
 	public void setProcessToDie(OPProcess opProcess)
 	{
+		/* set the process to die and free whatever resource it possess */
 		opProcess.setWillDie(1);
 		opProcess.freeResourcesBeforeDie();
 	}
 	
 	public void removeProcess(OPProcess process)
 	{
+		/*remove the process from the OS and the graph*/
 		try {
 			semaphoreGraph.acquire();
 		} catch (InterruptedException e) {

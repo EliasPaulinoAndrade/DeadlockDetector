@@ -151,7 +151,7 @@ public class GraphScreenController implements Initializable, OPSystemDelegate, G
 	
 	@FXML 
 	private void handleDeleteButtonAction(ActionEvent event) {
-		/*when the save button is clicked a new process is created and added to the graph */
+		/*deletes the selected process at the process tables when DELETE is clicked*/
 		
 		OPProcess selectedProcess = processTableView.getSelectionModel().getSelectedItem();
 		

@@ -130,6 +130,7 @@ public class GDGraphDrawer extends Region{
 	
 	public void removeNodeAt(Integer index)
 	{
+		/*remove the deleted process from the program inteface*/
 		GDGraphicsNode graphicsNode = this.nodes.get(index);
 		
 		this.getChildren().remove(graphicsNode.getNode());
