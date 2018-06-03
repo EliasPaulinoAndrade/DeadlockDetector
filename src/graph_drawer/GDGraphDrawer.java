@@ -219,7 +219,7 @@ public class GDGraphDrawer extends Region{
 		
 		this.getChildren().add(currentLineEdge);
 		startGraphicsNode.getStartingEdges().put(edgeIndex, graphicsEdge);
-		endGraphicsNode.getEndingEdges().put(edgeIndex, graphicsEdge);
+		endGraphicsNode.getEndingEdges().put(endGraphicsNode.getEndingEdges().size(), graphicsEdge);
 		
 		currentLineEdge.toBack();
 	}
