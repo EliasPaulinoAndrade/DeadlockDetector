@@ -9,11 +9,13 @@ public class GPNode<NodeElement extends GPNodeValue>{
 	private NodeElement value;
 	private List<GPEdge<?>> edges;
 	private Integer status;
+	private String visibleStatus;
 	
 	public GPNode(NodeElement value) {
 		this.value = value;
 		this.edges = new LinkedList<>();
 		this.status = 0;
+		this.visibleStatus = "LIVRE";
 	}
 	
 	public Integer getId() {
@@ -38,6 +40,14 @@ public class GPNode<NodeElement extends GPNodeValue>{
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	public String getVisibleStatus() {
+		return visibleStatus;
+	}
+
+	public void setVisibleStatus(String visibleStatus) {
+		this.visibleStatus = visibleStatus;
 	}
 
 	protected Boolean addEdge(GPEdge<?> edge) {

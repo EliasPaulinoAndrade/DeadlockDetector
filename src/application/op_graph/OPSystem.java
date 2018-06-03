@@ -15,7 +15,9 @@ import graph.GPNode;
 public class OPSystem implements Runnable, OPProcessDelegate{
 	private OPGraph graph;
 	private Integer restTime;
+	private Integer realRestTime;
 	private Semaphore semaphoreGraph = new Semaphore(1);
+	private Semaphore semaphoreUpdateColumns = new Semaphore(0);
 	private List<OPResourceNode<OPResource>> resources;
 	private List<OPProcessNode<OPProcess>> processes;
 	private Stack<GPNode<?>> nodesStack;
@@ -38,6 +40,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		super();
 		this.graph = new OPGraph();
 		this.restTime = restTime;
+		this.realRestTime = restTime * 1000;
 		this.resources = new ArrayList<>();
 		this.processes = new ArrayList<>();	
 		this.nodesStack = new Stack<>();
@@ -56,30 +59,37 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 			
 			callDeadLockDectector();
 			
-			for(int i = 0; i < this.processes.size(); i++)
-			{
-				System.out.print(this.processes.get(i).getStatus() + " - ");
-			}
-			System.out.println();
+//			printStatus();
 			
-			for(int i = 0; i < this.resources.size(); i++)
-			{
-				System.out.print(this.resources.get(i).getStatus() + " - ");
-			}
-			System.out.println();
+			checkedForDeadLocks();
 			
 			clearNodes();
 			
 			semaphoreGraph.release();
 			
 			try {
-				Thread.sleep(restTime);
+				Thread.sleep(realRestTime);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
+	
+//	private void printStatus()
+//	{
+//		for(int i = 0; i < this.processes.size(); i++)
+//		{
+//			System.out.print(this.processes.get(i).getStatus() + " - ");
+//		}
+//		System.out.println();
+//		
+//		for(int i = 0; i < this.resources.size(); i++)
+//		{
+//			System.out.print(this.resources.get(i).getStatus() + " - ");
+//		}
+//		System.out.println();
+//	}
 	
 	private void callDeadLockDectector()
 	{
@@ -152,6 +162,32 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		return 0;
 	}
 	
+	private void checkedForDeadLocks()
+	{
+		Boolean hasDeadLock = false;
+		for(OPProcessNode<OPProcess> process : this.processes)
+		{
+			if(process.getStatus() == 1)
+			{
+				hasDeadLock = true;
+				process.setVisibleStatus("DEADLOCK");
+			}
+			else if(process.getStatus() == 2)
+			{
+				process.setVisibleStatus("IMPEDIDO");
+			}
+			else
+			{
+				process.setVisibleStatus("LIVRE");
+			}
+		}
+		
+		if(delegate != null)
+		{
+			delegate.systemCheckedForDeadLocks(hasDeadLock);
+		}
+	}
+	
 	
 	private void clearNodes()
 	{
@@ -181,8 +217,8 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 			delegate.systemAppendedEdgeToNode(this, processNode);
 		}
 		
-		System.out.println(OPSystem.shared().getGraph());
-		System.out.println("-----------------------------");
+//		System.out.println(OPSystem.shared().getGraph());
+//		System.out.println("-----------------------------");
 		
 		semaphoreGraph.release();
 	}
@@ -212,8 +248,8 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 			delegate.systemAppendedEdgeToNode(this, resourceNode);
 		}
 		
-		System.out.println(OPSystem.shared().getGraph());
-		System.out.println("-----------------------------");
+//		System.out.println(OPSystem.shared().getGraph());
+//		System.out.println("-----------------------------");
 		
 		semaphoreGraph.release();
 	}
@@ -237,8 +273,8 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		graph.removeEdgeFromNode(resourceNode.getEdgeAt(resourceNode.numberOfEdges() - 1), resourceNode);
 		
 
-		System.out.println(OPSystem.shared().getGraph());
-		System.out.println("-----------------------------");
+//		System.out.println(OPSystem.shared().getGraph());
+//		System.out.println("-----------------------------");
 		
 		semaphoreGraph.release();
 	}
@@ -330,6 +366,10 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		return this.resources.size();
 	}
 	
+	public List<OPProcessNode<OPProcess>> getProcesses() {
+		return processes;
+	}
+
 	public OPProcessNode<OPProcess> getProcess(Integer index) {
 		return this.processes.get(index);
 	}
@@ -352,6 +392,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 
 	public void setRestTime(Integer restTime) {
 		this.restTime = restTime;
+		this.realRestTime = restTime * 1000;
 	}
 	
 	public OPSystemDelegate getDelegate() {
@@ -360,6 +401,21 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 
 	public void setDelegate(OPSystemDelegate delegate) {
 		this.delegate = delegate;
+	}
+	
+	public void claimSemaphoreUpdateColumns()
+	{
+		try {
+			this.semaphoreUpdateColumns.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void releaseSemaphoreUpdateColumns()
+	{
+		this.semaphoreUpdateColumns.release();
 	}
 	
 

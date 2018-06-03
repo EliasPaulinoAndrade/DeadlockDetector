@@ -18,7 +18,7 @@
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <Text layoutX="14.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No one deadlock until now." />
+                              <Text fx:id="osText" layoutX="14.0" layoutY="26.0" strokeWidth="0.0" strokeType="OUTSIDE"/>
                            </children>
                         </AnchorPane>
                     </content>

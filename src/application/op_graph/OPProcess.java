@@ -13,6 +13,8 @@ public class OPProcess implements GPNodeValue, Runnable{
 	private String processIdentifier;
 	private Integer restTime;
 	private Integer activeTime;
+	private Integer realRestTime;
+	private Integer realActiveTime;
 	private Integer willDie;
 
 	private OPProcessNode<OPProcess> selfNode;
@@ -29,6 +31,8 @@ public class OPProcess implements GPNodeValue, Runnable{
 		this.processIdentifier = processIdentifier;
 		this.restTime = restTime;
 		this.activeTime = activeTime;
+		this.realRestTime = restTime * 1000;
+		this.realActiveTime = activeTime * 1000;
 		this.willDie = 0;
 		this.usingResources = new ArrayList<>();
 		this.lastClaimedTime = System.currentTimeMillis();
@@ -45,7 +49,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 				tryToFreeResources(currentTime);
 				
 				tryToClaimRandomResource(currentTime);
-				Thread.sleep(restTime);
+				Thread.sleep(realRestTime);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -82,7 +86,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 	private void tryToClaimRandomResource(Long currentTime) throws InterruptedException {
 		/*try claim a random resource, it can wait by it, or continue if the resource is free.*/
 		
-		if(currentTime - this.lastClaimedTime < this.restTime) {
+		if(currentTime - this.lastClaimedTime < this.realRestTime) {
 			return ;
 		}
 		
@@ -128,7 +132,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 		
 		List<ResourcesTime> finishedResources = new ArrayList<>();
 		for(ResourcesTime resourcesTime : this.usingResources) {
-			if(currentTime - resourcesTime.initialTime > this.activeTime) {
+			if(currentTime - resourcesTime.initialTime > this.realActiveTime) {
 				
 				if(delegate != null) {
 					delegate.processNeedReleaseResource(selfNode, resourcesTime.resource);
@@ -182,6 +186,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 
 	public void setRestTime(Integer restTime) {
 		this.restTime = restTime;
+		this.realRestTime = restTime * 1000;
 	}
 
 	public Integer getActiveTime() {
@@ -190,6 +195,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 
 	public void setActiveTime(Integer activeTime) {
 		this.activeTime = activeTime;
+		this.realActiveTime = activeTime * 1000;
 	}
 
 	public Integer getWillDie() {
@@ -198,6 +204,11 @@ public class OPProcess implements GPNodeValue, Runnable{
 
 	public void setWillDie(Integer willDie) {
 		this.willDie = willDie;
+	}
+
+	public String getVisibleStatus() {
+		
+		return this.getSelfNode().getVisibleStatus();
 	}
 
 	public OPResource getClaimedResource() {

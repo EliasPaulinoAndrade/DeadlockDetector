@@ -24,6 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 public class GraphScreenController implements Initializable, OPSystemDelegate, GDGraphDrawerDelegate{
 	@FXML private VBox processTableViewContainer; 
@@ -33,6 +34,8 @@ public class GraphScreenController implements Initializable, OPSystemDelegate, G
 	@FXML private TextField processActiveTime;
 	@FXML private CheckBox autoIdProcess;
 	@FXML private AnchorPane graphContainer;
+	
+	@FXML private Text osText;
 	
 	private TableView<OPProcess> processTableView;
 	private TableColumn<OPProcess, String> processColumn;
@@ -61,7 +64,7 @@ public class GraphScreenController implements Initializable, OPSystemDelegate, G
 		drawer.setDataSource(graphDataSource);
 		drawer.setDelegate(this);
 		
-		graphContainer.getChildren().add(drawer);	
+		graphContainer.getChildren().add(drawer);
 		
 		for(OPResource resource : resources) {
 			resourceTableView.getItems().add(resource);
@@ -93,7 +96,7 @@ public class GraphScreenController implements Initializable, OPSystemDelegate, G
 		processColumn3.setCellValueFactory(new PropertyValueFactory<>("activeTime"));
 		
 		processColumn4 = new TableColumn<>("Status");
-		processColumn4.setCellValueFactory(new PropertyValueFactory<>("status"));
+		processColumn4.setCellValueFactory(new PropertyValueFactory<>("visibleStatus"));
 		
 		processTableView = new TableView<OPProcess>();
 		processTableView.getColumns().add(processColumn);
@@ -165,8 +168,6 @@ public class GraphScreenController implements Initializable, OPSystemDelegate, G
 		drawer.removeNodeAt(selectedProcess.getSelfNode().getId());
 		
 		processTableView.getItems().remove(selectedProcess);
-		
-		System.out.println("DELETE");
 	
 	}
 	
@@ -229,10 +230,27 @@ public class GraphScreenController implements Initializable, OPSystemDelegate, G
 		});	
 		
 	}
+	
+	@Override
+	public void systemCheckedForDeadLocks(Boolean hasDeadLock)
+	{
+		if(hasDeadLock)
+		{
+			this.setOSText("DEADLOCK DETECTADO");
+		}
+		else
+		{
+			this.setOSText("SEM DEADLOCK");
+		}
+		processTableView.refresh();
+	}
 
 	@Override
 	public void graphDrawerNodeClicked(GDGraphDrawer graphDrawer) {
 		
-		
+	}
+
+	public void setOSText(String oSText) {
+		osText.setText(oSText);
 	}
 }

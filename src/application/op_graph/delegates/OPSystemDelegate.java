@@ -8,5 +8,6 @@ import graph.GPNode;
 */
 public interface OPSystemDelegate {
 	void systemAppendedEdgeToNode(OPSystem system, GPNode<?> gpNode);
-	void systemWillRemoveLastEdgeFromNode(OPSystem system, GPNode<?> gpNode);	
+	void systemWillRemoveLastEdgeFromNode(OPSystem system, GPNode<?> gpNode);
+	void systemCheckedForDeadLocks(Boolean hasDeadLock);
 }

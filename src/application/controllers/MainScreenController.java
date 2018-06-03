@@ -119,7 +119,7 @@ public class MainScreenController implements Initializable{
 	}
 	
 	public void handleChoiceBoxAction(ActionEvent event) {
-		System.out.println("EI");
+//		System.out.println("EI");
 		this.resourceName.setText(resourcesChoiceBox.getValue());
 	}
 	@Override
