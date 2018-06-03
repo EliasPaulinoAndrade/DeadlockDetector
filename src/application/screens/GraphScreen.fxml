@@ -52,9 +52,9 @@
                                              <children>
                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Process ID: " />
                                                 <TextField fx:id="processId" GridPane.columnIndex="1" />
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Rest Time:" GridPane.rowIndex="1" />
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Rest Time (s):" GridPane.rowIndex="1" />
                                                 <TextField fx:id="processRestTime" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Active Time: " GridPane.rowIndex="2" />
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Active Time (s): " GridPane.rowIndex="2" />
                                                 <TextField fx:id="processActiveTime" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                 <CheckBox fx:id="autoIdProcess" mnemonicParsing="false" onAction="#handleCheckBoxAction" text="Auto Id" GridPane.rowIndex="3" />
                                                 <Button mnemonicParsing="false" onAction="#handleSaveButtonAction" text="SAVE" GridPane.rowIndex="5" />

@@ -73,7 +73,7 @@
             <GridPane alignment="CENTER" minHeight="50.0" minWidth="600.0" prefHeight="50.0" prefWidth="805.0">
                <children>
                   <Button minWidth="100.0" mnemonicParsing="false" onAction="#handleStartButtonAction" style="-fx-background-color: #54ACD2;" text="START" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="OpSystem Rest Time: " />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="OpSystem Rest Time (in seconds): " />
                   <TextField fx:id="opSystemRestTimeField" GridPane.columnIndex="1" />
                </children>
                <columnConstraints>
