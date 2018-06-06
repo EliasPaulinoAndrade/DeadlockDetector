@@ -7,17 +7,17 @@ public class ScreenConstants {
 	
 	@SuppressWarnings("serial")
 	public static final Dictionary<String, String> defaultResourcesNames = new Hashtable<String, String>() {{
-			put("Teclado", "file:src/application/images/keyboard.png");
-			put("Impressora", "file:src/application/images/printer.png");
-			put("Mouse", "file:src/application/images/mouse.png");
-			put("Arquivo", "file:src/application/images/archive.png");
-			put("Pendrive", "file:src/application/images/pendrive.png");
-			put("CD", "file:src/application/images/cd.png");
-			put("Disquete", "file:src/application/images/floopy_disk.png");
-			put("Controle", "file:src/application/images/game_pad.png");
-			put("Gravador", "file:src/application/images/recorder.png");
+			put("Teclado", "/application/images/keyboard.png");
+			put("Impressora", "/application/images/printer.png");
+			put("Mouse", "/application/images/mouse.png");
+			put("Arquivo", "/application/images/archive.png");
+			put("Pendrive", "/application/images/pendrive.png");
+			put("CD", "/application/images/cd.png");
+			put("Disquete", "/application/images/floopy_disk.png");
+			put("Controle", "/application/images/game_pad.png");
+			put("Gravador", "/application/images/recorder.png");
 		}
 	};
 	
-	public static final String defaultProcessImage = "file:src/application/images/process.png";
+	public static final String defaultProcessImage = "/application/images/process.png";
 }

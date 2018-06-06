@@ -77,14 +77,14 @@ public class OPGraphDrawerDataSource implements GDGraphDrawerDataSource{
 				nodeContainer.getChildren().add(nodeRect);
 			}
 			else {
-				Image resourceImage = new Image(resourceImagePath);
+				Image resourceImage = new Image(getClass().getResourceAsStream(resourceImagePath));
 				ImageView nodeImage = new ImageView(resourceImage);
 				nodeContainer.getChildren().add(nodeImage);
 			}
 		}
 		else {
 			String processImagePath = ScreenConstants.defaultProcessImage;
-			Image processImage = new Image(processImagePath);
+			Image processImage = new Image(getClass().getResourceAsStream(processImagePath));
 			ImageView nodeImage = new ImageView(processImage);
 			
 			
