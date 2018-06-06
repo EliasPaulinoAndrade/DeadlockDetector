@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.Semaphore;
 
+import application.log.Log;
 import application.op_graph.delegates.OPProcessDelegate;
 import application.op_graph.delegates.OPSystemDelegate;
 import graph.GPNode;
@@ -17,10 +18,11 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	private Integer restTime;
 	private Integer realRestTime;
 	private Semaphore semaphoreGraph = new Semaphore(1);
-	private Semaphore semaphoreUpdateColumns = new Semaphore(0);
 	private List<OPResourceNode<OPResource>> resources;
 	private List<OPProcessNode<OPProcess>> processes;
 	private Stack<GPNode<?>> nodesStack;
+	
+	private static Log log = new Log();
 	
 	private OPSystemDelegate delegate;
 	
@@ -217,6 +219,8 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 			delegate.systemAppendedEdgeToNode(this, processNode);
 		}
 		
+		writeInLog(processNode.getValue().getProcessIdentifier(), "solicitou", resourceNode.getValue().getName());
+		
 //		System.out.println(OPSystem.shared().getGraph());
 //		System.out.println("-----------------------------");
 		
@@ -248,6 +252,8 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 			delegate.systemAppendedEdgeToNode(this, resourceNode);
 		}
 		
+		writeInLog(processNode.getValue().getProcessIdentifier(), "adquiriu", resourceNode.getValue().getName());
+		
 //		System.out.println(OPSystem.shared().getGraph());
 //		System.out.println("-----------------------------");
 		
@@ -272,7 +278,8 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		
 		graph.removeEdgeFromNode(resourceNode.getEdgeAt(resourceNode.numberOfEdges() - 1), resourceNode);
 		
-
+		
+		writeInLog(processNode.getValue().getProcessIdentifier(), "liberou", resourceNode.getValue().getName());
 //		System.out.println(OPSystem.shared().getGraph());
 //		System.out.println("-----------------------------");
 		
@@ -326,7 +333,7 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 	public void setProcessToDie(OPProcess opProcess)
 	{
 		/* set the process to die and free whatever resource it possess */
-		opProcess.setWillDie(1);
+		opProcess.setWillDie(true);
 		opProcess.freeResourcesBeforeDie();
 	}
 	
@@ -403,19 +410,9 @@ public class OPSystem implements Runnable, OPProcessDelegate{
 		this.delegate = delegate;
 	}
 	
-	public void claimSemaphoreUpdateColumns()
+	private void writeInLog(String idProcess, String record, String resource)
 	{
-		try {
-			this.semaphoreUpdateColumns.acquire();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public void releaseSemaphoreUpdateColumns()
-	{
-		this.semaphoreUpdateColumns.release();
+		log.writeInLog(idProcess, record, resource);
 	}
 	
 

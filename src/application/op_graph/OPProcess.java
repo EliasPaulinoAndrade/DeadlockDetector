@@ -15,7 +15,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 	private Integer activeTime;
 	private Integer realRestTime;
 	private Integer realActiveTime;
-	private Integer willDie;
+	private Boolean willDie;
 
 	private OPProcessNode<OPProcess> selfNode;
 	private List<ResourcesTime> usingResources;
@@ -33,7 +33,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 		this.activeTime = activeTime;
 		this.realRestTime = restTime * 1000;
 		this.realActiveTime = activeTime * 1000;
-		this.willDie = 0;
+		this.willDie = false;
 		this.usingResources = new ArrayList<>();
 		this.lastClaimedTime = System.currentTimeMillis();
 		this.random = new Random();
@@ -43,13 +43,13 @@ public class OPProcess implements GPNodeValue, Runnable{
 	@Override
 	public void run() {
 		Long currentTime;
-		while(this.getWillDie() == 0) {
+		while(!this.getWillDie()) {
 			try {
 				currentTime = System.currentTimeMillis();
 				tryToFreeResources(currentTime);
 				
 				tryToClaimRandomResource(currentTime);
-				Thread.sleep(realRestTime);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -106,7 +106,7 @@ public class OPProcess implements GPNodeValue, Runnable{
 		
 		randomResource.claim();
 		
-		if(this.getWillDie() == 1)
+		if(this.getWillDie())
 		{
 			randomResource.release();
 		}
@@ -198,11 +198,11 @@ public class OPProcess implements GPNodeValue, Runnable{
 		this.realActiveTime = activeTime * 1000;
 	}
 
-	public Integer getWillDie() {
+	public Boolean getWillDie() {
 		return willDie;
 	}
 
-	public void setWillDie(Integer willDie) {
+	public void setWillDie(Boolean willDie) {
 		this.willDie = willDie;
 	}
 

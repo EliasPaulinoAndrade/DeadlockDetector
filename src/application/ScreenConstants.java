@@ -13,6 +13,9 @@ public class ScreenConstants {
 			put("Arquivo", "file:src/application/images/archive.png");
 			put("Pendrive", "file:src/application/images/pendrive.png");
 			put("CD", "file:src/application/images/cd.png");
+			put("Disquete", "file:src/application/images/floopy_disk.png");
+			put("Controle", "file:src/application/images/game_pad.png");
+			put("Gravador", "file:src/application/images/recorder.png");
 		}
 	};
 	
