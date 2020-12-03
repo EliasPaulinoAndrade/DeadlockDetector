@@ -1,5 +1,7 @@
 # deadlockDectector
 
+![Image of Yaktocat](https://i.imgur.com/Pgl78ST.png)
+
 **Pacotes**
 
 * graph: contem a implementação de um grafo generico.
